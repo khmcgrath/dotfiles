@@ -1,0 +1,125 @@
+zlib
+lz
+soext
+shtool
+ac_aux_dir
+sdk
+9.3
+angular/core
+snack_embed
+exc
+exc_type
+exc_traceback
+exc_value
+curexec_value
+numbers
+source
+print s%args
+Python.h
+version
+libnewt.$(SONAME).dylib
+libnewt.$(SOEXT).$(SONAME)
+libnewt
+pyconfig
+sed 's|.*\(python[0-9]*\.[0-9]*\).*|\1|g' | tr '\n' ' ')'
+tstate
+tstate->exc_type
+tstate->exc_value
+tstate->exc_traceback
+tp_print
+initproj
+initproj_module
+pyinit
+snack
+export
+import
+(tzsh)/
+zui
+ldflags
+config
+znap
+cflags
+zsh-sn
+mio
+print
+distutils
+openssl
+python
+find
+molovo
+errptr
+reg_stmt_to_entry(reg, (void**)&entry, stmt, &lower_bound, errPtr)
+errPtr
+void
+homebrew
+sed
+libdir
+comodef
+compdef
+module
+module build
+link=no
+$(libdir)/$(tzsh)/$(VERSION)
+tzsh
+zocide
+TERM
+PATH
+grc
+opt
+path
+highlight
+#zmodload
+init
+zoxide
+manpath
+html
+compctl
+fuzzy
+cdr
+zmodload -F -a
+zmodload
+zmodload -F
+zmodload -a
+z-shell
+interactive
+hup
+lc
+tmux
+install
+.local
+usr/local/bin
+znap load
+znap install
+Git
+$HOME
+.zi
+$XDG_DATA_HOME
+zi
+compinit
+zctemp
+./
+
+curexec_value
+curexc_type
+curexc_traceback
+curexc_value
+print (s%args)
+tstate->curexc_type
+tstate->curexc_value
+tstate->curexc_traceback
+tp_vectorcall_offset
+zcompile -UMz ./
+#zmodload
+zmodload -F -a
+zmodload -F
+zmodload -a
+zmodload
+znap install
+znap source
+$XDG_DATA_HOME
+$HOME
+.zi
+zcompile -UMz 
+
+12322
+
