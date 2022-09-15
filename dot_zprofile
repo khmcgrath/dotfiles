@@ -1,0 +1,25 @@
+#export BYOBU_PREFIX=/usr/local
+
+# Created by `pipx` on 2021-05-04 03:15:30
+export PATH="$PATH:/Users/kieranmcgrath/.local/bin"
+
+export PATH="$PATH:/Users/kieranmcgrath/bin"
+
+# Setting PATH for Python 3.9
+# The original version is saved in .zprofile.pysave
+#PATH="/Library/Frameworks/Python.framework/Versions/3.9/bin:${PATH}"
+export PATH
+
+
+if [ -d /etc/profile.d ]; then
+  for i in /etc/profile.d/*.sh; do
+    if [ -r $i ]; then
+      . $i
+    fi
+  done
+  unset i
+fi
+
+#source ~/.local/share/lscolors.sh
+#eval /usr/local/bin/gdircolors
+#_byobu_sourced=1 . /usr/local/Cellar/byobu/HEAD-bfb7a76/bin/byobu-launch 2>/dev/null || true

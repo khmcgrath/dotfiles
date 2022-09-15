@@ -1,0 +1,40 @@
+#unalias l
+#unalias ls
+#unalias la
+#unalias ll
+alias l='exa'
+alias la='exa -a --color=always | less -rEXF'
+#alias ll='exa -lah@ --color=always | less -rEXF'
+#alias ls='exa --color=always | less -rEXF'
+alias nano='/usr/local/bin/nano'
+alias less='less -REXF'
+
+#function listlong () {
+#	if (( $# == 0 ))
+#        then exa -ldah@ --color=always * | less -EXF; fi
+#	exa -ldah@ --color=always $@ | less -EXF
+#}
+#function listls () {
+#	if (( $# == 0 ))
+#        then exa -d --color=always * | less -EXF; fi
+#	exa -d --color=always $@ | less -EXF
+#}
+
+#alias ll=listlong
+#alias ls=listls
+
+
+# Alias --help ; ignore rest of the line 
+#alias -g -- help ="help $[@] | pygmentize | less -EFX; true "
+
+# Modify the input line before it runs
+#function lessify() {
+#    if [[ "$BUFFER" =~ " help$" ]] ; then
+#        BUFFER="$BUFFER $ | pygmentize | less -EFX"
+#    fi  
+#    zle accept-line
+#}
+#
+#zle -N lessify_widget lessify
+# Bind to the Enter key
+#bindkey '^M' lessify_widget
