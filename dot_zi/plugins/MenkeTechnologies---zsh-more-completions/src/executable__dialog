@@ -1,0 +1,38 @@
+#compdef dialog
+
+local arguments
+
+arguments=(
+    '--buildlist[<tag1> <item1> <status1>...]:text::height::width:'
+    '--calendar[<day> <month> <year>]:text::height::width:'
+    '--checklist[<list height> <tag1> <item1> <status1>...]:text::height::width:'
+    '--dselect[<width>]:directory::height:'
+    '--editbox[<width>]:file::height:'
+    '--form[<form height> <label1> <l_y1> <l_x1> <item1> <i_y1> <i_x1> <flen1> <ilen1>...]:text::height::width:'
+    '--fselect[<width>]:filepath::height:'
+    '--gauge[\[<percent>\]]:text::height::width:'
+    '--infobox[<width>]:text::height:'
+    '--inputbox[\[<init>\]]:text::height::width:'
+    '--inputmenu[<menu height> <tag1> <item1>...]:text::height::width:'
+    '--menu[<menu height> <tag1> <item1>...]:text::height::width:'
+    '--mixedform[<form height> <label1> <l_y1> <l_x1> <item1> <i_y1> <i_x1> <flen1> <ilen1> <itype>...]:text::height::width:'
+    '--mixedgauge[<percent> <tag1> <item1>...]:text::height::width:'
+    '--msgbox[<width>]:text::height:'
+    '--passwordbox[\[<init>\]]:text::height::width:'
+    '--passwordform[<label1> <l_y1> <l_x1> <item1> <i_y1> <i_x1> <flen1> <ilen1>...]:height::width::form height:'
+    '--pause[<seconds>]:text::height::width:'
+    '--prgbox[<width>]:text::command::height:'
+    '--programbox[<width>]:text::height:'
+    '--progressbox[<width>]:text::height:'
+    '--radiolist[<list height> <tag1> <item1> <status1>...]:text::height::width:'
+    '--rangebox[<min-value> <max-value> <default-value>]:text::height::width:'
+    '--tailbox[<width>]:file::height:'
+    '--tailboxbg[<width>]:file::height:'
+    '--textbox[<width>]:file::height:'
+    '--timebox[<hour> <minute> <second>]:text::height::width:'
+    '--treeview[<list-height> <tag1> <item1> <status1> <depth1>...]:text::height::width:'
+    '--yesno[<width>]:text::height:'
+    '*:filename:_files'
+)
+
+_arguments -s $arguments

@@ -1,0 +1,20 @@
+#compdef ubertooth-follow
+
+local arguments
+
+arguments=(
+  '-h[help]'
+  '-l[(in hexadecimal)]:LAP:'
+  '-u[(in hexadecimal)]:UAP:'
+  '-U[set ubertooth device to use]:0-7:'
+  '-r[capture packets to PCAPNG file]:filename:'
+  '-q[capture packets to PCAP file]:filename:'
+  '-e[]'
+  '-d[]'
+  '-a[AFH]'
+  '-b[device (hci0)]'
+  '-w[delay in 625us timeslots (default:5)]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+function git-quick-stats {
+  local bindir="/Users/kieranmcgrath/.zi/plugins/arzzen---git-quick-stats"
+  
+  
+  
+  local -xU PATH="$bindir":"$PATH"
+  
+      "$bindir"/"git-quick-stats" "$@"
+
+  }
+
+git-quick-stats "$@"

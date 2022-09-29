@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+function git-open {
+  local bindir="/Users/kieranmcgrath/.zi/plugins/paulirish---git-open"
+  
+  
+  
+  local -xU PATH="$bindir":"$PATH"
+  
+      "$bindir"/"git-open" "$@"
+
+  }
+
+git-open "$@"

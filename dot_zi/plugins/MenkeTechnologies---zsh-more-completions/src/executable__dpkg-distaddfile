@@ -1,0 +1,11 @@
+#compdef dpkg-distaddfile
+
+local arguments
+
+arguments=(
+  '-f[write files here instead of debian/files.]:files-list-file:'
+  '--version[show the version.]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

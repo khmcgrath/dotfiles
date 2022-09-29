@@ -1,0 +1,4 @@
+*.md diff=markdown
+*.zsh diff=zsh
+z-a-* diff=zsh
+*za-* diff=zsh

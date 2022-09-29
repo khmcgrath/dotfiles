@@ -1,0 +1,10 @@
+#compdef gv2gml
+
+local arguments
+
+arguments=(
+  '-o[output to <file> (stdout)]:file:'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

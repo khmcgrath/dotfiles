@@ -1,0 +1,14 @@
+#compdef airserv-ng
+
+local arguments
+
+arguments=(
+  '-h[This help screen]'
+  '-p[TCP port to listen on (default:666)]:port:'
+  '-d[Wifi interface to use]'
+  '-c[Channel to use]:chan:'
+  '-v[Debug level (1 to 3; default: 1)]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

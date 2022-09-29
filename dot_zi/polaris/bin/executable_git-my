@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+function git-my {
+  local bindir="/Users/kieranmcgrath/.zi/plugins/davidosomething---git-my"
+  
+  
+  
+  local -xU PATH="$bindir":"$PATH"
+  
+      "$bindir"/"git-my" "$@"
+
+  }
+
+git-my "$@"

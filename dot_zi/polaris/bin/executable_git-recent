@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+function git-recent {
+  local bindir="/Users/kieranmcgrath/.zi/plugins/paulirish---git-recent"
+  
+  
+  
+  local -xU PATH="$bindir":"$PATH"
+  
+      "$bindir"/"git-recent" "$@"
+
+  }
+
+git-recent "$@"

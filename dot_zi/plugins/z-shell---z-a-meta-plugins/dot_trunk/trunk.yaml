@@ -1,0 +1,22 @@
+version: 0.1
+cli:
+  version: 0.16.1-beta
+repo:
+  repo:
+    host: github.com
+    owner: z-shell
+    name: z-a-meta-plugins
+lint:
+  linters:
+    - name: markdownlint
+      command:
+        [markdownlint, -q, --config, .github/.markdownlint.yaml, "${target}"]
+      direct_configs: [.github/.markdownlint.yaml]
+      success_codes: [0, 1]
+  enabled:
+    - git-diff-check@SYSTEM
+    - actionlint@1.6.16
+    - gitleaks@8.11.1
+    - markdownlint@0.32.2
+    - prettier@2.7.1
+    - shfmt@3.5.0

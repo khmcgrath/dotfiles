@@ -1,0 +1,17 @@
+#autoload
+# -*- mode: zsh; sh-indentation: 2; indent-tabs-mode: nil; sh-basic-offset: 2; -*-
+# vim: ft=zsh sw=2 ts=2 et
+#
+# Copyright (c) 2019 Sebastian Gniazdowski
+# Copyright (c) 2021 Z-Shell Community
+
+→za-default-ice-main-cmd-help-handler() {
+  +zi-message "{auto} —— default-ice [ -s | -c | -g | -t | -q | -h ] {nl}{nl}" \
+    "{auto}[ -s ] —— Show currently set default ices{rst}{nl}" \
+    "{auto}[ -c ] —— Reset default ices{rst}{nl}" \
+    "{auto}[ -g ] —— Return current ices in{rst} {var}REPLAY{msg} hash{rst}{nl}" \
+    "{auto}[ -t ] —— Show statistics{rst}{nl}" \
+    "{auto}[ -q ] —— Hide all messages{rst}{nl}" \
+    "{auto}[ -h ] —— This message{rst}{nl}"
+  return 0
+}

@@ -1,0 +1,16 @@
+#compdef foo2zjs-icc2ps
+
+local arguments
+
+arguments=(
+  '-i[Input profile: Generates Color Space Array (CSA)]:profile:'
+  '-o[Output profile: Generates Color Rendering Dictionary(CRD)]:profile:'
+  '-t[Intent (0=Perceptual, 1=Colorimetric, 2=Saturation, 3=Absolute)]:0,1,2,3:'
+  '-b[Black point compensation (CRD only)]'
+  '-u[Do NOT generate resource name on CRD]'
+  '-c[Precision (0=LowRes, 1=Normal (default), 2=Hi-res) (CRD only)]:0,1,2:'
+  '-n[Alternate way to set precission, number of CLUT points (CRD only)]:gridpoints:'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

@@ -1,0 +1,13 @@
+*.json
+*.db
+.DS_Store*
+._*
+.*.swp
+.*.swo
+.Spotlight*
+.Trash*
+**/*~
+nbproject/*
+/tests/test-git/.git/
+#/tests/test-git/*
+!/tests/test-git/resetgit

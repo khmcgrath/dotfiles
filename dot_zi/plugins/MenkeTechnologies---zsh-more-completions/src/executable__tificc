@@ -1,0 +1,27 @@
+#compdef tificc
+
+local arguments
+
+arguments=(
+  '-v[Verbose]'
+  '-i[Input profile (defaults to sRGB)]:profile:'
+  '-o[Output profile (defaults to sRGB)]:profile:'
+  '-l[Transform by device-link profile]:profile:'
+  '-t[rendering intent:]:n:'
+  '-b[Black point compensation]'
+  '-d[Observer adaptation state (abs.col. only)]:0..1:'
+  '-c[Precalculates transform (0=Off, 1=Normal, 2=Hi-res, 3=LoRes)]:0,1,2,3:'
+  '-w[Output depth. Use 32 for floating-point]:8,16,32:'
+  '-a[Handle channels > 4 as alpha]'
+  '-n[Ignore embedded profile on input]'
+  '-e[Embed destination profile]'
+  '-s[Save embedded profile as <new profile>]:new profile:'
+  '-p[Soft proof profile]:profile:'
+  '-m[Soft proof intent]:n:'
+  '-g[Marks out-of-gamut colors on softproof]'
+  '-k[Ink-limiting in % (CMYK only)]:0..400:'
+  '-h[More help]:0,1,2,3:'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

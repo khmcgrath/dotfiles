@@ -1,0 +1,11 @@
+#compdef composeglyphs
+
+local arguments
+
+arguments=(
+  '-e[t<target_encoding.afm> -a<output.afm>]:base_encoding.afm:'
+  '-C[<output.afm.c>]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

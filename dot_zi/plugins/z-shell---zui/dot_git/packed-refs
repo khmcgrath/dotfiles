@@ -1,0 +1,24 @@
+# pack-refs with: peeled fully-peeled sorted 
+8560679907287e06ac7aace59c2c2d8c801e0cd4 refs/remotes/origin/main
+df90f549c887191c621e5b9b6013fd42e47456b8 refs/remotes/origin/maintenance05-22
+93fab80845a511c0371a314fa8966c98b88ea4ff refs/tags/epoch-demos
+^ed19d8ddd56d98998e49096fff5f6a7f962942b7
+9868444bd75a0a0ba5eb4e424b9d2fc610c6dd66 refs/tags/epoch-final
+^c58bbbbb590d3a97869ddcaddce7f900db10c69b
+79e8523b9a96b8d9e36a717626583bbe5e8379b0 refs/tags/epoch-refactoring
+^af887c0531e4cb70aa078a334ac633d69b1fb49b
+bb363d05c838479b8eee7029a36dd03ab948f432 refs/tags/epoch-serialize
+^bcde28f2fc008a885a55eeb7f5a59e7990f9d1b2
+b56fc8be5f8389c4b9787749bee0166223ea1d3d refs/tags/epoch-text/select_mode
+^c2adf5166f2a13499609f32b0eca2272b84bd60b
+b58052abd7ce971ec3e3fc5721f394659a89af1b refs/tags/v0.9
+^af2665ba1cc7f9fb013dd354e2fb718f85fe38d6
+5a101eb53bafafeaabec982f34bdfb135e05e763 refs/tags/v1.0
+^4add1e2dbcae99d9d1683ec4d11914e5407f6307
+e464d6f858ef08c9cdc2deb706a27bba4cf904f9 refs/tags/v1.1
+^8edea8c61b4ccb7a10451e739875b6e32846104f
+c162e3f737710293226f3f22ff94c8e3a78d8666 refs/tags/v1.2
+^2dee3a2250ccd14ab297052f621083120248292a
+a5c2a48ec9988e7c836061f09a466890e3502adb refs/tags/v1.21
+^5c43cda24c417346e2d1bb7d0c2c93a427347d84
+26a80bf77169a6b55e717a22e9ed3e7dd1fc9e0f refs/tags/v1.22

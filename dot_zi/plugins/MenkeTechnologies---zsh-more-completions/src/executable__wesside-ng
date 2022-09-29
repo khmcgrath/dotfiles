@@ -1,0 +1,20 @@
+#compdef wesside-ng
+
+local arguments
+
+arguments=(
+  '-h[This help screen]'
+  '-i[Interface to use (mandatory)]:iface:'
+  '-m[My IP address]:my ip:'
+  '-n[Network IP address]:net ip:'
+  '-a[Source MAC Address]:mymac:'
+  '-c[Do not crack the key]'
+  '-p[Minimum bytes of PRGA to gather]:min prga:'
+  '-v[mac> : Victim BSSID]'
+  '-t[Cracking threshold]:threshold:'
+  '-f[Highest scanned chan (default: 11)]:max chan:'
+  '-k[Ignore acks and tx txnum times]:txnum:'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

@@ -1,0 +1,6 @@
+{
+  "conventionalCommits.scopes": ["workspace", "plugin"],
+  "markdownlint.config": {
+    "extends": ".github/.markdownlint.yaml"
+  }
+}

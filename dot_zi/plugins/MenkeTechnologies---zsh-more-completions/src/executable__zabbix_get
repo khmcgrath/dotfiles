@@ -1,0 +1,25 @@
+#compdef zabbix_get
+
+local arguments
+
+arguments=(
+  {--key,-k}'[Specify key of item to retrieve value for]':item-key:
+  {-s,--host}'[specify host name or IP address of a host]'
+  {-p,--port}'[specify port number of agent running on the host]'
+  {-I,--source-address}'[specify source IP address]'
+  {-k,--key}'[specify key of the item to retrieve value for]'
+  '(- * :)'{-h,--help}'[display this help message]'
+  {-V,--version}'[display version number]'
+  '--tls-crl-file[Full pathname of a file containing revoked certificates]':CRL-file:_files
+  '--tls-agent-cert-issuer[Allowed agent certificate issuer]':cert-issuer:
+  '--tls-connect[how to connect to agent]':Values:
+  '--tls-ca-file[full pathname of a file containing the top-level]':CA-file:_files
+  '--tls-agent-cert-subject[allowed agent certificate subject]'
+  '--tls-cert-file[full pathname of a file containing the certificate]':cert-file:_files
+  '--tls-key-file[full pathname of a file containing the private key]':key-file:_files
+  '--tls-psk-identity[unique, case sensitive string used to]':PSK-identity:
+  '--tls-psk-file[full pathname of a file containing the pre-shared]':PSK-file:_files
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

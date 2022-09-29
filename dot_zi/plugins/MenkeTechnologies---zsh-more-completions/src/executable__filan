@@ -1,0 +1,18 @@
+#compdef filan
+
+local arguments
+
+arguments=(
+  '-d[increase verbosity (use up to 4 times)]'
+  '-i[only analyze this fd]:fdnum:'
+  '-n[analyze all fds from 0 up to fdnum-1 (default: 1024)]:fdnum:'
+  '-s[simple output with just type and socket address or path]'
+  '-f[analyze file system entry]:filename:'
+  '-T[wait before analyzing, useful to connect with debugger]:seconds:'
+  '-r[raw output for time stamps and rdev]'
+  '-L[follow symbolic links instead of showing their properties]'
+  '-o[output goes to filename, that can be:]:filename:'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

@@ -1,0 +1,34 @@
+#compdef cewl
+
+local arguments
+
+arguments=(
+  '(- * :)'{-h,--help}'[Show help]'
+  {-k,--keep}'[Keep the downloaded file]'
+  {-d,--depth}'[depth to spider to, default 2]:depth'
+  {-m,--min}'[lengthMinimum word length, default 3]:min word length'
+  {-o,--offsite}'[Let the spider visit other sites]'
+  {-w,--write}'[Write the output to the file]'
+  {-u,--ua}'[user agent to send]'
+  {-n,--no-words}'[Dont output the wordlist]'
+  '--with-numbers[Accept words with numbers in as well as just letters]'
+  {-a,--meta}'[include meta data]'
+  '--meta[fileOutput file for meta data.]:file:_files'
+  {-e,--email}'[Include email addresses]'
+  '--email_file[Output file for email addresses]:file:_files'
+  '--meta-temp-dir[the temporary directory used by exiftool when parsing files, default /tmp]:dir:_files -/'
+  {-c,--count}'[Show the count for each word found]'
+  {-v,--verbose}'[Verbose]'
+  {--header,-H}'[In format name:value - can pass multiple]'
+  '--debug[Extra debug information]'
+  '--auth_type[Digest or basic]:type'
+  '--auth_user[Authentication username]:user:_users'
+  '--auth_password[Authentication password]:pass'
+  '--proxy_host[Proxy host]:host'
+  '--proxy_port[Proxy port, default 8080]:port:_ports'
+  '--proxy_user[Username for proxy, if required]:username:_users'
+  '--proxy_password[Password for proxy, if required]:password'
+  '*:urls:_urls'
+)
+
+_arguments -s $arguments

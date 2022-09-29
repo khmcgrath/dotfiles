@@ -1,0 +1,14 @@
+#compdef ppudump
+
+local arguments
+
+arguments=(
+  '-F[Set output format to <format>]:format:'
+  '-M[with ExitCode=2 if more information is available]'
+  '-S[PPU version check. May lead to reading errors]'
+  '-V[Set verbosity to <verbose>]:verbose:'
+  '-h[-\? This helpscreen]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

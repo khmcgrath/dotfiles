@@ -1,0 +1,10 @@
+#compdef jstat
+
+local arguments
+
+arguments=(
+  '-J[Pass <flag> directly to the runtime system.]:flag:'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

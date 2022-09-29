@@ -1,0 +1,17 @@
+#compdef prl_nettool
+
+local arguments
+
+arguments=(
+  '--dhcp[switch to DHCP]'
+  '--dhcpv6[switch IPv6 to DHCP]'
+  '--gateway[set default gateway]:IP:'
+  '--dns[set dns servers]:IPs:'
+  '--ip[set ip addresses to adapter]:IP/MASK:'
+  '--search-domain[set search domain]'
+  '--hostname[set hostname]'
+  '--route[set route via <IP> dev <MAC>]:IP:'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

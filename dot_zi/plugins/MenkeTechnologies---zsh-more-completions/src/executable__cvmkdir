@@ -1,0 +1,10 @@
+#compdef cvmkdir
+
+local arguments
+
+arguments=(
+  '-k[is the Affinity Key for the directory]:key:'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

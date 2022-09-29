@@ -1,0 +1,19 @@
+---
+name: "⭕ Trunk"
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*.*.*"]
+  pull_request:
+    types: [opened, synchronize]
+  #  schedule:
+  #      - cron: 0 04 * * 1-5
+  workflow_dispatch: {}
+
+jobs:
+  trunk:
+    if: github.repository == 'z-shell/zsh-lint'
+    name: "⚡"
+    uses: z-shell/.github/.github/workflows/trunk-call.yml@main
+    with:
+      get_dependencies: "sudo apt update && sudo apt install -yq zsh"

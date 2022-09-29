@@ -1,0 +1,12 @@
+#compdef graphml2gv
+
+local arguments
+
+arguments=(
+  '-g[use <name> as template for graph names]:name:'
+  '-o[output to <file> (stdout)]:file:'
+  '-v[verbose mode]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

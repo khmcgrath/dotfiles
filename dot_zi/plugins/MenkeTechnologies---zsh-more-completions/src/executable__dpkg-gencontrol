@@ -1,0 +1,24 @@
+#compdef dpkg-gencontrol
+
+local arguments
+
+arguments=(
+  '-p[print control file for package.]:package:'
+  '-c[get control info from this file.]:control-file:'
+  '-l[get per-version info from this file.]:changelog-file:'
+  '-F[force changelog format.]:changelog-format:'
+  '-v[set version of binary package.]:force-version:'
+  '-f[write files here instead of debian/files.]:files-list-file:'
+  '-P[temporary build directory instead of debian/tmp.]:package-build-dir:'
+  '-n[assume the package filename will be <filename>.]:filename:'
+  '-O[write to stdout (or <file>), not .../DEBIAN/control.]'
+  {-is,-ip,-isp,-ips}'[deprecated, ignored for compatibility.]'
+  '-D[<field>=<value> override or add a field and value.]'
+  '-U[remove a field.]:field:'
+  '-V[<name>=<value> set a substitution variable.]'
+  '-T[read variables here, not debian/substvars.]:substvars-file:'
+  '--version[show the version.]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

@@ -1,0 +1,23 @@
+#compdef linkicc
+
+local arguments
+
+arguments=(
+  '-o[Output devicelink profile. \[defaults to devicelink.icc\]]:profile:'
+  '-t[rendering intent:]:n:'
+  '-c[Precision (0=LowRes, 1=Normal, 2=Hi-res) \[defaults to 1\]]:0,1,2:'
+  '-n[Alternate way to set precision, number of CLUT points]:gridpoints:'
+  '-d[description text (quotes can be used)]:description:'
+  '-y[copyright notice (quotes can be used)]:copyright:'
+  '-k[Ink-limiting in % (CMYK only)]:0..400:'
+  '-8[Creates 8-bit devicelink]'
+  '-x[Creatively, guess deviceclass of resulting profile.]'
+  '-b[Black point compensation]'
+  '-a[Observer adaptation state (abs.col. only)]:0..1:'
+  '-l[Use linearization curves (may affect accuracy)]'
+  '-r[Profile version. (CAUTION: may change the profile implementation)]:v.r:'
+  '-h[More help]:0,1,2,3:'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

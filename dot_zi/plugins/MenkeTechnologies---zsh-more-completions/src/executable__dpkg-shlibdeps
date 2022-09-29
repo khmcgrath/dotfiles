@@ -1,0 +1,25 @@
+#compdef dpkg-shlibdeps
+
+local arguments
+
+arguments=(
+  '-e[(use -e if <executable> starts with -)]:executable:'
+  '-d[next executable(s) set shlibs:<dependency-field>.]:dependency-field:'
+  '-l[add directory to private shared library search list.]:library-dir:'
+  '-p[set <varname-prefix>:* instead of shlibs:*.]:varname-prefix:'
+  '-O[write variable settings to stdout (or <file>).]'
+  '-L[shlibs override file, not debian/shlibs.local.]:local-shlibs-file:'
+  '-T[update variables here, not debian/substvars.]:substvars-file:'
+  '-t[set package type (default is deb).]:type:'
+  '-x[exclude package from the generated dependencies.]:package:'
+  '-S[search needed libraries in the given]:package-build-dir:'
+  '-I[ignore needed libraries, shlibs and symbols files]:package-build-dir:'
+  '-v[enable verbose mode (can be used multiple times).]'
+  '--ignore-missing-info[dont fail if dependency information cant be found.]'
+  '--warnings[define set of active warnings (see manual page).]'
+  '--admindir[change the administrative directory.]'
+  '--version[show the version.]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

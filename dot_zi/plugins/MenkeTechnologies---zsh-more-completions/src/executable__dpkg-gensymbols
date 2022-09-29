@@ -1,0 +1,22 @@
+#compdef dpkg-gensymbols
+
+local arguments
+
+arguments=(
+  '-p[generate symbols file for package.]:package:'
+  '-P[temporary build directory instead of debian/tmp.]:package-build-dir:'
+  '-e[explicitly list libraries to scan.]:library:'
+  '-v[version of the packages (defaults to]:version:'
+  '-c[compare generated symbols file with the reference]:level:'
+  '-q[keep quiet and never emit any warnings or]'
+  '-I[force usage of <file> as reference symbols]:file:'
+  '-O[write to stdout (or <file>), not .../DEBIAN/symbols.]'
+  '-t[write in template mode (tags are not]'
+  '-V[verbose output; write deprecated symbols and pattern]'
+  '-a[assume <arch> as host architecture when processing]:arch:'
+  '-d[display debug information during work.]'
+  '--version[show the version.]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

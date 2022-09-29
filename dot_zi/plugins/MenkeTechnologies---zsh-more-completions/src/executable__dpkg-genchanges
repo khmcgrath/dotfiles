@@ -1,0 +1,35 @@
+#compdef dpkg-genchanges
+
+local arguments
+
+arguments=(
+  '--build[...\] specify the build <type>: full, source, binary]'
+  '-g[source and arch-indep build.]'
+  '-G[source and arch-specific build.]'
+  '-b[binary-only, no source files.]'
+  '-B[binary-only, only arch-specific files.]'
+  '-A[binary-only, only arch-indep files.]'
+  '-S[source-only, no binary files.]'
+  '-c[get control info from this file.]:control-file:'
+  '-l[get per-version info from this file.]:changelog-file:'
+  '-f[get .deb files list from this file.]:files-list-file:'
+  '-v[include all changes later than version.]:since-version:'
+  '-C[use change description from this file.]:changes-description:'
+  '-m[override controls maintainer value.]:maintainer:'
+  '-e[override changelogs maintainer value.]:maintainer:'
+  '-u[directory with files (default is ..).]:upload-files-dir:'
+  '-si[source includes orig, if new upstream (default).]'
+  '-sa[source includes orig, always.]'
+  '-sd[source is diff and .dsc only.]'
+  '-q[quiet - no informational messages on stderr.]'
+  '-F[force changelog format.]:changelog-format:'
+  '-V[<name>=<value> set a substitution variable.]'
+  '-T[read variables here, not debian/substvars.]:substvars-file:'
+  '-D[<field>=<value> override or add a field and value.]'
+  '-U[remove a field.]:field:'
+  '-O[write to stdout (default) or <filename>.]'
+  '--version[show the version.]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

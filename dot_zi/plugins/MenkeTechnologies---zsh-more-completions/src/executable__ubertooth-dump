@@ -1,0 +1,15 @@
+#compdef ubertooth-dump
+
+local arguments
+
+arguments=(
+  '-h[help]'
+  '-b[dump received bitstream (GnuRadio style)]'
+  '-c[modulation]'
+  '-l[modulation]'
+  '-U[set ubertooth device to use]:0-7:'
+  '-d[]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

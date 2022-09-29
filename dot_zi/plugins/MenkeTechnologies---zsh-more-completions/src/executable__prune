@@ -1,0 +1,13 @@
+#compdef prune
+
+local arguments
+
+arguments=(
+  '-h[print this message]'
+  '-v[verbose]'
+  '-n[Name node to prune.]:node:'
+  '-N[Attribute specification to apply to pruned nodes]:attrspec:'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+function git-now {
+  local bindir="/Users/kieranmcgrath/.zi/plugins/iwata---git-now"
+  
+  
+  
+  local -xU PATH="$bindir":"$PATH"
+  
+      "$bindir"/"git-now" "$@"
+
+  }
+
+git-now "$@"

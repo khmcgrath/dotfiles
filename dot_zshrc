@@ -1,5 +1,12 @@
-#export MODULE_PATH=/Users/kieranmcgrath/.zi/zmodules/zpmod/Src:$MODULE_PATH
-#zmodload zi/zpmod
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+##if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+##  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+##fi
+
+export MODULE_PATH=/Users/kieranmcgrath/.zi/zmodules/zpmod/Src:$MODULE_PATH
+zmodload zi/zpmod
 zmodload zsh/newuser
 zmodload zsh/attr
 zmodload zsh/stat
@@ -14,6 +21,7 @@ zmodload zsh/zle
 zmodload zsh/zutil
 zmodload zsh/complist
 zmodload zsh/net/socket
+zmodload zsh/net/tcp
 zmodload zsh/clone
 zmodload zsh/compctl
 zmodload zsh/complete
@@ -41,11 +49,35 @@ autoload -Uz zmv zargs compinit
 autoload -Uz zrecompile
 autoload -U colors && colors
 
+export TYPEWRITTEN_CURSOR="terminal"
+export TYPEWRITTEN_RELATIVE_PATH="home"
+export TYPEWRITTEN_COLOR_MAPPINGS="primary:#9580FF;secondary:#8AFF80;accent:#FFFF80;info_negative:#FF80BF;info_positive:#8AFF80;info_neutral_1:#FF9580;info_neutral_2:#FFFF80;info_special:#80FFEA"
 #setopt ALL_EXPORT
 #setopt GLOBAL_EXPORT
-setopt INTERACTIVE_COMMENTS
+#setopt INTERACTIVE_COMMENTS
 setopt PATH_SCRIPT
 unsetopt BG_NICE
+setopt ALIAS_FUNC_DEF
+#setopt rc_quotes
+setopt POSIX_BUILTINS
+setopt TRAPS_ASYNC
+setopt EMACS
+setopt AUTO_RESUME
+setopt SH_FILE_EXPANSION
+#setopt NULL_GLOB
+setopt extendedglob
+#setopt shnullcmd
+setopt zle
+setopt complete_aliases
+setopt MULTI_FUNC_DEF
+setopt MULTIOS
+setopt COMBINING_CHARS
+setopt SHORT_LOOPS
+setopt NOTIFY
+
+alias compinit="compinit $1 $2 -d $XDG_CACHE_HOME/zsh/compdump && zcompile -UMz $XDG_CACHE_HOME/zsh/compdump"
+autoload -U -z -w /usr/local/Cellar/zsh/HEAD-b7f280a/share/zsh/functions/*~*.zwc~_*
+#compinit
 
 export MANPATH=/usr/local/share/man:/usr/share/man:$MANPATH
 #export TERM=xterm-256color
@@ -57,11 +89,12 @@ export LC_ALL="en_US.UTF-8"
 export LANG="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 
+export LESSOPEN="|/usr/local/bin/lesspipe.sh %s"
+export LESS=' -i -E -J -M -F -R -W -X -z-4'
+
 #autoload -U /usr/local/Cellar/zsh/HEAD-eb738c7/share/zsh/functions/*
 
 source ~/.config/lscolors
-autoload -Uz compinit
-#compinit
 source /Users/kieranmcgrath/.local/share/lscolors.sh
 
 #[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
@@ -79,19 +112,42 @@ source /Users/kieranmcgrath/.local/share/lscolors.sh
 #    fi
 #}
 
+
+setopt listambiguous
+setopt equals
+setopt autolist
 setopt autocd
 autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
+zstyle ':completion:*:*:cdr:*:*' menu selection
 
+source ~/.zpwrBindZstyle
+
+#zstyle ':autocomplete:' config true
+zstyle ':autocomplete:*' default-context ''
 zstyle ':autocomplete:*' widget-style menu-select
 zstyle ':autocomplete:*' insert-unambiguous no
 zstyle ':autocomplete:recent-dirs' backend cdr
-zstyle ':autocomplete:*' list-lines 16
-zstyle ':autocomplete:history-search:*' list-lines 16
-zstyle ':autocomplete:*' min-delay 0.01
+zstyle ':autocomplete:*' list-lines 9
+zstyle ':autocomplete:history-search:*' list-lines 9
+zstyle ':autocomplete:*' min-delay 0.02
 zstyle ':autocomplete:*' fzf-completion no
 zstyle ':autocomplete:*' min-input 0
-#zstyle ':autocomplete:*' async off
+zstyle ':autocomplete:*' async on
+#zstyle ':autocomplete:*' add-space executables aliases functions builtins reserved-words commands
+zstyle ':completion::complete:*' cache-path /Users/kieranmcgrath/.cache/zsh/compcache
+zstyle ':completion:*' cache-path /Users/kieranmcgrath/.cache/zsh/compcache
+zstyle ':completion:*' use-cache yes
+
+zstyle ':autocomplete:list-choices:*' max-lines 100%
+zstyle ':autocomplete:*' list-lines 9
+zstyle ':autocomplete:history-search:*' list-lines 9
+zstyle ':autocomplete:history-incremental-search-*:*' list-lines 9
+zstyle ":completion:*:commands" rehash 1
+
+#source ~/.zpwraliases
+
+#typeset -gx _comp_dumpfile=/Users/kieranmcgrath/.config/zsh/compdump
 
 #export _ZO_ECHO=1
 #export _ZO_EXCLUDE_DIRS=""
@@ -116,7 +172,7 @@ export MANPATH=$MANPATH:/opt/local/share/man
 export EDITOR=/usr/local/bin/nano
 
 function ls {
-command exa --color=always -Gxa $@ | less -rEFX
+command exa --color=always -Gxa $@ | less
 }
 
 export PATH="$HOME/.rbenv/bin:$PATH"
@@ -125,25 +181,33 @@ eval "$(jenv init -)"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 eval "$(rbenv init -)"
+export PATH="$HOME/.plenv/bin:$PATH"
+eval "$(plenv init -)"
 
 # The following lines were added by compinstall
 
-#zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
+#zstyle ':completion:*' _complete _subcommands _functions _expand  _ignored _correct _approximate _cmdstring
 #zstyle :compinstall filename '/Users/kieranmcgrath/.zshrc'
 #zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 # Colorize completions using default `ls` colors.
-zstyle ':completion:*' list-colors ''
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+#zstyle ':completion:*' list-colors ''
+#zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+#zstyle ':completion:*:default' list-colors '${(s.:.)LS_COLORS}'
 setopt CDABLE_VARS
-setopt GLOB_DOTS
+#setopt GLOB_DOTS
 setopt CORRECT
-setopt CORRECT_ALL
+#setopt CORRECT_ALL
 setopt HUP
-setopt no_flowcontrol
+#setopt no_flowcontrol
 setopt PROMPT_SUBST
 setopt ALIAS_FUNC_DEF
+setopt listpacked
+setopt longlistjobs
+#setopt rematchpcre
+setopt unset
 
+
+setopt auto_menu
 builtin setopt menu_complete
 builtin setopt pathscript
 builtin setopt pathdirs
@@ -151,21 +215,22 @@ builtin setopt list_packed
 setopt extended_glob
 setopt MAGIC_EQUAL_SUBST
 setopt MULTIBYTE
-setopt HIST_VERIFY
 
 setopt append_history           # allow multiple sessions to append to one history
 setopt bang_hist                # treat ! special during command expansion
 setopt extended_history         # Write history in :start:elasped;command format
-#setopt hist_expire_dups_first   # expire duplicates first when trimming history
-#setopt hist_find_no_dups        # When searching history, don't repeat
+setopt hist_expire_dups_first   # expire duplicates first when trimming history
+setopt hist_find_no_dups        # When searching history, don't repeat
 #setopt hist_ignore_dups         # ignore duplicate entries of previous events
 #setopt hist_ignore_space        # prefix command with a space to skip it's recording
 setopt hist_reduce_blanks       # Remove extra blanks from each command added to history
-#setopt hist_verify              # Don't execute immediately upon history expansion
+setopt hist_verify              # Don't execute immediately upon history expansion
 setopt inc_append_history       # Write to history file immediately, not when shell quits
 setopt share_history
+setopt GLOB_DOTS
+setopt TRANSIENT_RPROMPT
 
-#set -o emacs
+set -o emacs
 unalias run-help
 autoload -U run-help
 export HELPDIR=/usr/local/share/zsh/5.9.0.1-dev/help:/usr/local/share/help
@@ -173,18 +238,15 @@ export PAGER='less'
 #eval "$(direnv hook zsh)"
 
 autoload -Uz tetriscurses
-#bindkey -e
-#autoload -Uz compinit
-#compinit -u
+bindkey -e
 # End of lines added by compinstall
 # Lines configured by zsh-newuser-install
-HISTFILE=~/.histfile
-HISTSIZE=10000
-SAVEHIST=10000
+#HISTFILE=~/.histfile
+HISTSIZE=100000
+SAVEHIST=100000
 # End of lines configured by zsh-newuser-install
 
 #export PATH="/usr/local/bin:$PATH"
-typeset -U PATH
 
 # tat: tmux attach
 #function tat {
@@ -214,60 +276,148 @@ function tat {
 
 
 #zstyle ':autocomplete:*' default-context ''
-#zstyle ':autocomplete:*:' group-order expansions history-words options aliases functions builtins reserved-words executables local-directories directories suffix-aliases
-#zstyle ':completion:*:' group-order expansions history-words options aliases functions builtins reserved-words executables local-directories directories suffix-aliases
-#zstyle ':autocomplete:*' add-space executables aliases functions builtins reserved-words commands
+#zstyle ':autocomplete:*:' group-order expansions history-words options aliases functions builtins reserved-words executables local-directories directories suffix-aliases parameters
+#zstyle ':completion:*:' group-order expansions history-words options aliases functions builtins reserved-words executables local-directories directories suffix-aliases parameters
+##zstyle ':autocomplete:*' add-space executables aliases functions builtins reserved-words commands
 #zstyle ':completion:*:*:man:*:*' menu select=long search
+#zstyle ':completion:*' completer _extensions _complete _approximate  _oldlist _expand _force_rehash  _files
+#zstyle ':completion:*' menu select
 
 zcolors=$LS_COLORS
 
-autoload -Uz promptinit bashcompinit; promptinit
+autoload -Uz promptinit
 
-#compinit
-#bashcompinit
+#source ~/.zshrc.zi
+
+
+#HB_CNF_HANDLER="$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
+#if [ -f "$HB_CNF_HANDLER" ]; then
+#source "$HB_CNF_HANDLER";
+#fi
 
 export NVM_DIR="$HOME/.config/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+export NVM_COMPLETION=true
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 #[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+eval "`pip completion --zsh`"
 
 if [[ ! -f $HOME/.zi/bin/zi.zsh ]]; then
   print -P "%F{33}▓▒░ %F{160}Installing (%F{33}z-shell/zi%F{160})…%f"
   command mkdir -p "$HOME/.zi" && command chmod go-rwX "$HOME/.zi"
-  command git clone -q --depth=1 --branch "tmp" https://github.com/ss-o/zi "$HOME/.zi/bin" && \
+  command git clone -q --depth=1 --branch "next" https://github.com/z-shell/zi "$HOME/.zi/bin" && \
     print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
     print -P "%F{160}▓▒░ The clone has failed.%f%b"
 fi
-source "$HOME/.zi/bin/zi.zsh"
+typeset -A ZI
+ZI[OPTIMIZE_OUT_DISK_ACCESSES]="1"
+ZI[BIN_DIR]="$HOME/.zi/bin"
+ZI[COMPINIT_OPTS]=""
+ZI[ZCOMPDUMP_PATH]="$XDG_CACHE_HOME/zsh/compdump"
+source "${ZI[BIN_DIR]}/zi.zsh"
+#source "$HOME/.zi/bin/zi.zsh"
 autoload -Uz _zi
 (( ${+_comps} )) && _comps[zi]=_zi
 # examples here -> https://wiki.zshell.dev/ecosystem/category/-annexes
 #zicompinit # <- https://wiki.zshell.dev/docs/guides/commands
+zi light z-shell/0
 zi light-mode for \
   z-shell/zsh-string-lib \
   z-shell/z-a-meta-plugins \
   @annexes+ @zunit @ext-git
 
-zi load MenkeTechnologies/zsh-autocomplete
+#zi ice wait'0d' compile'(async|async.plugin).zsh' pick'async.zsh' src'async.plugin.zsh' atload'!async_init'
+#zi load mafredri/zsh-async
 
-zi ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh' nocd
+#zi ice wait lucid nocompletions
+#zi load MenkeTechnologies/zsh-more-completions
+zi load unixorn/warhol.plugin.zsh
+zi load keith/zsh-xcode-completions
+zi load MenkeTechnologies/zsh-gem-completion
+zi load MenkeTechnologies/zsh-cargo-completion
+zi load MenkeTechnologies/zzcomplete
+zi load MenkeTechnologies/zsh-pip-completion
+zi load MenkeTechnologies/zsh-pip-description-completion
+zi ice lucid nocompile
+zi load MenkeTechnologies/zsh-cpan-completion
+
+zi ice lucid nocompile wait'0e' nocompletions
+zi load MenkeTechnologies/zsh-more-completions
+
+#zi wait pack atload=+"zicompinit; zicdreplay" for brew-completions
+
+
+export NVM_LAZY_LOAD=true
+zi ice lucid
+zi load lukechilds/zsh-nvm
+
+zi ice lucid
+zi load lukechilds/zsh-better-npm-completion
+
+#zi load GabrielDeml/zsh-autocomplete
+
+zi light joshskidmore/zsh-fzf-history-search
+zi ice
+zi light chitoku-k/fzf-zsh-completions
+
+#zi ice depth=1
+#zi light romkatv/powerlevel10k
+
+
+#zi lucid load'![[ $MYPROMPT = 5 ]]' unload'![[ $MYPROMPT != 5 ]]' \
+#  pick"/dev/null" multisrc"{async,pure}.zsh" atload'!prompt_pure_precmd' nocd for \
+#    sindresorhus/pure
+
+#zi ice lucid compile'(typewritten|async).zsh' pick'async.zsh' src'typewritten.zsh' nocd
+#zi load reobin/typewritten
+
+zi ice lucid compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh' nocd
+zi load sindresorhus/pure
+fpath+=($HOME/.zi/plugins/sindresorhus---pure)
+promptinit
+prompt pure
+
 #zi wait lucid pick'async.zsh' src'pure.zsh' atload'prompt_pure_precmd' nocd for \
-zi light sindresorhus/pure
 
-zi wait pack atload="zicompinit; zicdreplay" for clarketm/zsh-completions
-zi wait pack atload=+"zicompinit; zicdreplay" for system-completions
+zi ice lucid
+zi load MenkeTechnologies/zsh-autocomplete
+#zi load marlonrichert/zsh-autocomplete
+
+#zi ice lucid nocompile wait'0e' nocompletions
+#zi load MenkeTechnologies/zsh-more-completions
+
+#zi ice lucid wait'0'
+
+zi ice lucid
+zi light ThorpeJosh/mac-zsh-completions
+#zi load system-completions
+zi ice lucid
+zi light clarketm/zsh-completions
+#zi ice blockf
+#zi light zsh-users/zsh-completions
+#zi ice blockf
+#zi light zchee/zsh-completions
+zi wait pack for z-shell/system-completions
 
 zi light z-shell/zui
 zi light z-shell/zsh-lint
+
+#zi ice lucid src'zsh-autocomplete.plugin.zsh' atload'autoload +X -U -z module/.autocomplete.__init__'
+
+
+
 
 #zi wait lucid for \
 #  atinit"ZI[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
 #zi light     z-shell/F-Sy-H #\
 #  blockf \
 #zi light     zsh-users/zsh-completions #\
-zi wait lucid for \
-   atload"_zsh_autosuggest_start" \
-     zsh-users/zsh-autosuggestions
+#zi wait lucid for \
+#   atinit"_zsh_autosuggest_start" \
+zi light-mode  lucid wait'0g' atload"!_zsh_autosuggest_start" for zsh-users/zsh-autosuggestions
 
+#ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
+#ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 #zi light MenkeTechnologies/fast-syntax-highlighting
 #zi light neg-serg/fast-syntax-highlighting
@@ -276,8 +426,36 @@ zi wait lucid for \
 
 #zi load zsh-autocomplete
 #zi load marlonrichert/zsh-autocomplete
-#zi load GabrielDeml/zsh-autocomplete
-zi wait lucid light-mode for \
-  atinit"ZI[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
-    xPMo/fast-syntax-highlighting
+
+
+zstyle ':completion:*' single-ignored 'show'
+
+#zi load khmcgrath/zsh-autocomplete
+
+#zi wait lucid light-mode for \
+#  atinit"zicompinit_fast; zicdreplay" \
+zi ice lucid wait'0f'
+#zi light zdharma/fast-syntax-highlighting
+zi light xPMo/fast-syntax-highlighting
+
 #zdharma/fast-syntax-highlighting
+export PATH="/usr/local/opt/m4/bin:$PATH"
+export PATH="/usr/local/opt/ncurses/bin:$PATH"
+export PATH="/usr/libexec:$PATH"
+
+export HOMEBREW_GITHUB_API_TOKEN=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
+#zicompinit
+#zicdreplay
+#typeset -gxU ZSH_AUTOSUGGEST_MANUAL_REBIND='1'
+typeset -gxU ZSH_AUTOSUGGEST_USE_ASYNC='1'
+
+export FPATH="/usr/local/share/zsh/site-functions:/usr/local/share/zsh/functions:$FPATH"
+typeset -U PATH FPATH
+
+#zicompinit_fast
+#zicompinit_fast
+zicompinit_fast
+zicdreplay
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+##[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

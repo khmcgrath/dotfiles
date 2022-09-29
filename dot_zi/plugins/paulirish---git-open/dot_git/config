@@ -1,0 +1,27 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+	precomposeunicode = true
+[transfer]
+	fsckobjects = false
+[receive]
+	fsckobjects = false
+[fetch]
+	fsckobjects = false
+[pull]
+	rebase = false
+[submodule]
+	active = .
+[remote "origin"]
+	url = https://github.com/paulirish/git-open
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+[submodule "test/test_helper/bats-assert"]
+	url = https://github.com/ztombol/bats-assert
+[submodule "test/test_helper/bats-support"]
+	url = https://github.com/ztombol/bats-support

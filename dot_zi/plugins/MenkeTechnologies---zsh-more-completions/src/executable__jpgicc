@@ -1,0 +1,24 @@
+#compdef jpgicc
+
+local arguments
+
+arguments=(
+  '-v[Verbose]'
+  '-i[Input profile (defaults to sRGB)]:profile:'
+  '-o[Output profile (defaults to sRGB)]:profile:'
+  '-t[rendering intent:]:n:'
+  '-b[Black point compensation]'
+  '-d[Observer adaptation state (abs.col. only)]:0..1:'
+  '-n[Ignore embedded profile]'
+  '-e[Embed destination profile]'
+  '-s[Save embedded profile as <new profile>]:new profile:'
+  '-c[Precalculates transform (0=Off, 1=Normal, 2=Hi-res, 3=LoRes) \[defaults to 1\]]:0,1,2,3:'
+  '-p[Soft proof profile]:profile:'
+  '-m[SoftProof intent]:0,1,2,3:'
+  '-g[Marks out-of-gamut colors on softproof]'
+  '-q[Output JPEG quality]:0..100:'
+  '-h[More help]:0,1,2,3:'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments
