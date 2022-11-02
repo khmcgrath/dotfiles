@@ -21,7 +21,7 @@ git_extra_default_branch() {
     fi
 }
 
-VERSION="6.5.0-dev"
+VERSION="6.6.0-dev"
 INSTALL_SCRIPT="https://raw.githubusercontent.com/tj/git-extras/master/install.sh"
 
 update() {

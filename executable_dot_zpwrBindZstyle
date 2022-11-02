@@ -19,8 +19,8 @@
     zstyle ':completion:*' file-patterns '%p(^-/):globbed-files' '^(-/):directories' '*:all-files'
 
         # Make the list prompt friendly
-#        zstyle ':completion:*' list-prompt \
-#            "%SAt %s%M%pS, Hit TAB for more, or the characters to insert%s"
+        zstyle ':completion:*' list-prompt \
+            "%SAt %s%M%pS, Hit TAB for more, or the characters to insert%s"
 
         # Make the selection prompt friendly when there are a lot of choices
         zstyle ':completion:*' select-prompt \
@@ -222,7 +222,9 @@ zstyle ':completion:*' group-order \
     # Ignore compsys completion functions
     #zstyle ':completion:*:functions' ignored-patterns '_*'
 
-    zstyle ':completion:*' ignored-patterns '*..' # BREAKS find -ctime <tab>
+    #zstyle ':completion:*' ignored-patterns '*..' # BREAKS find -ctime <tab>
+    #zstyle ':completion:*' ignored-patterns 'cd ..' # BREAKS find -ctime <tab>
+    zstyle ':completion:*:*:cd:*:*' ignored-patterns '..'
 
     # ignore .. as completion option
     zstyle ':completion:*:files' ignored-patterns '*..'

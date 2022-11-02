@@ -441,9 +441,9 @@ builtin source "${ZI[BIN_DIR]}/lib/zsh/side.zsh" || { builtin print -P "${ZI[col
       # Store ices at clone of a plugin
       .zi-store-ices "$local_path/._zi" ICE "" "" "" ""
       reply=(
-        ${(on)ZI_EXTS2[(I)zi hook:\\\!atclone-pre <->]}
-        ${(on)ZI_EXTS[(I)z-annex hook:\\\!atclone-<-> <->]}
-        ${(on)ZI_EXTS2[(I)zi hook:\\\!atclone-post <->]}
+        ${(on)ZI_EXTS2[(I)zi hook:\!atclone-pre <->]}
+        ${(on)ZI_EXTS[(I)z-annex hook:\!atclone-<-> <->]}
+        ${(on)ZI_EXTS2[(I)zi hook:\!atclone-post <->]}
       )
       for key in "${reply[@]}"; do
         arr=( "${(Q)${(z@)ZI_EXTS[$key]:-$ZI_EXTS2[$key]}[@]}" )
@@ -610,13 +610,13 @@ builtin source "${ZI[BIN_DIR]}/lib/zsh/side.zsh" || { builtin print -P "${ZI[col
   done
 
   +zi-message "Initializing completion ({func}compinit{rst}){…}"
-  command rm -f ${ZI[ZCOMPDUMP_PATH]:-${XDG_DATA_HOME:-$ZDOTDIR:-$HOME}/.zcompdump}
+  command rm -f "${ZI[ZCOMPDUMP_PATH]}"
 
   # Workaround for a nasty trick in _vim
   (( ${+functions[_vim_files]} )) && unfunction _vim_files
 
   builtin autoload -Uz compinit
-  compinit ${${(M)use_C:#1}:+-C} -d ${ZI[ZCOMPDUMP_PATH]:-${XDG_DATA_HOME:-$ZDOTDIR:-$HOME}/.zcompdump} "${(Q@)${(z@)ZI[COMPINIT_OPTS]}}"
+  compinit ${${(M)use_C:#1}:+-C} -d "${ZI[ZCOMPDUMP_PATH]}" "${(Q@)${(z@)ZI[COMPINIT_OPTS]}}"
 } # ]]]
 # FUNCTION: .zi-download-file-stdout [[[
 # Downloads file to stdout.
@@ -951,9 +951,9 @@ builtin source "${ZI[BIN_DIR]}/lib/zsh/side.zsh" || { builtin print -P "${ZI[col
             fi
             # Run annexes' atpull hooks (the before atpull-ice ones). The SVN block.
             reply=(
-              ${(on)ZI_EXTS2[(I)zi hook:e-\\\!atpull-pre <->]}
-              ${${(M)ICE[atpull]#\!}:+${(on)ZI_EXTS[(I)z-annex hook:\\\!atpull-<-> <->]}}
-              ${(on)ZI_EXTS2[(I)zi hook:e-\\\!atpull-post <->]}
+              ${(on)ZI_EXTS2[(I)zi hook:e-\!atpull-pre <->]}
+              ${${(M)ICE[atpull]#\!}:+${(on)ZI_EXTS[(I)z-annex hook:\!atpull-<-> <->]}}
+              ${(on)ZI_EXTS2[(I)zi hook:e-\!atpull-post <->]}
             )
             for key in "${reply[@]}"; do
               arr=( "${(Q)${(z@)ZI_EXTS[$key]:-$ZI_EXTS2[$key]}[@]}" )
@@ -1039,9 +1039,9 @@ builtin source "${ZI[BIN_DIR]}/lib/zsh/side.zsh" || { builtin print -P "${ZI[col
           # The URL-snippet block.
           if [[ $update = -u && $ZI[annex-multi-flag:pull-active] -ge 1 ]] {
             reply=(
-              ${(on)ZI_EXTS2[(I)zi hook:e-\\\!atpull-pre <->]}
-              ${${ICE[atpull]#\!}:+${(on)ZI_EXTS[(I)z-annex hook:\\\!atpull-<-> <->]}}
-              ${(on)ZI_EXTS2[(I)zi hook:e-\\\!atpull-post <->]}
+              ${(on)ZI_EXTS2[(I)zi hook:e-\!atpull-pre <->]}
+              ${${ICE[atpull]#\!}:+${(on)ZI_EXTS[(I)z-annex hook:\!atpull-<-> <->]}}
+              ${(on)ZI_EXTS2[(I)zi hook:e-\!atpull-post <->]}
             )
             for key in "${reply[@]}"; do
               arr=( "${(Q)${(z@)ZI_EXTS[$key]:-$ZI_EXTS2[$key]}[@]}" )
@@ -1097,9 +1097,9 @@ builtin source "${ZI[BIN_DIR]}/lib/zsh/side.zsh" || { builtin print -P "${ZI[col
       # The local-file snippets block.
       if [[ $update = -u ]] {
         reply=(
-          ${(on)ZI_EXTS2[(I)zi hook:e-\\\!atpull-pre <->]}
-          ${${(M)ICE[atpull]#\!}:+${(on)ZI_EXTS[(I)z-annex hook:\\\!atpull-<-> <->]}}
-          ${(on)ZI_EXTS2[(I)zi hook:e-\\\!atpull-post <->]}
+          ${(on)ZI_EXTS2[(I)zi hook:e-\!atpull-pre <->]}
+          ${${(M)ICE[atpull]#\!}:+${(on)ZI_EXTS[(I)z-annex hook:\!atpull-<-> <->]}}
+          ${(on)ZI_EXTS2[(I)zi hook:e-\!atpull-post <->]}
         )
         for key in "${reply[@]}"; do
           arr=( "${(Q)${(z@)ZI_EXTS[$key]:-$ZI_EXTS2[$key]}[@]}" )
@@ -1172,7 +1172,7 @@ builtin source "${ZI[BIN_DIR]}/lib/zsh/side.zsh" || { builtin print -P "${ZI[col
       # The block is common to all 3 snippet types.
       reply=(
         ${(on)ZI_EXTS2[(I)zi hook:no-e-\\\!atpull-pre <->]}
-        ${${ICE[atpull]:#\!*}:+${(on)ZI_EXTS[(I)z-annex hook:\\\!atpull-<-> <->]}}
+        ${${ICE[atpull]:#\!*}:+${(on)ZI_EXTS[(I)z-annex hook:\!atpull-<-> <->]}}
         ${(on)ZI_EXTS2[(I)zi hook:no-e-\\\!atpull-post <->]}
       )
       for key in "${reply[@]}"; do
@@ -1188,9 +1188,9 @@ builtin source "${ZI[BIN_DIR]}/lib/zsh/side.zsh" || { builtin print -P "${ZI[col
       # Run annexes' atclone hooks (the before atclone-ice ones)
       # The block is common to all 3 snippet types.
       reply=(
-        ${(on)ZI_EXTS2[(I)zi hook:\\\!atclone-pre <->]}
-        ${(on)ZI_EXTS[(I)z-annex hook:\\\!atclone-<-> <->]}
-        ${(on)ZI_EXTS2[(I)zi hook:\\\!atclone-post <->]}
+        ${(on)ZI_EXTS2[(I)zi hook:\!atclone-pre <->]}
+        ${(on)ZI_EXTS[(I)z-annex hook:\!atclone-<-> <->]}
+        ${(on)ZI_EXTS2[(I)zi hook:\!atclone-post <->]}
       )
       for key in "${reply[@]}"; do
         arr=( "${(Q)${(z@)ZI_EXTS[$key]:-$ZI_EXTS2[$key]}[@]}" )
@@ -2105,18 +2105,19 @@ zimv() {
 
   @zi-substitute from to
 
-  local -a afr
+  local -a afr retval
   ( () { builtin setopt localoptions noautopushd; builtin cd -q "$dir"; } || return 1
     afr=( ${~from}(DN) )
-    if (( ${#afr} )) {
-      if (( !OPTS[opt_-q,--quiet] )) {
-        command cp -vf "${afr[1]}" "$to"
+    if (( ${#afr} )); then
+      if (( !OPTS[opt_-q,--quiet] )); then
+        command cp -vf "${afr[1]}" "$to"; retval=$?
         command cp -vf "${afr[1]}".zwc "$to".zwc 2>/dev/null
-      } else {
-        command cp -f "${afr[1]}" "$to"
+      else
+        command cp -f "${afr[1]}" "$to"; retval=$?
         command cp -f "${afr[1]}".zwc "$to".zwc 2>/dev/null
-      }
-    }
+      fi
+    fi
+    return $retval
   )
 } # ]]]
 # FUNCTION: ∞zi-compile-plugin-hook [[[

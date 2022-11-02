@@ -45,10 +45,13 @@ zmodload zsh/langinfo
 zmodload zsh/watch
 zmodload zsh/param/private
 
-autoload -Uz zmv zargs compinit
-autoload -Uz zrecompile
+setopt extendedglob
+
+autoload -Uz zmv zargs compinit bashcompinit
 autoload -U colors && colors
 
+export CLICOLOR=1
+export TYPEWRITTEN_PROMPT_LAYOUT="pure"
 export TYPEWRITTEN_CURSOR="terminal"
 export TYPEWRITTEN_RELATIVE_PATH="home"
 export TYPEWRITTEN_COLOR_MAPPINGS="primary:#9580FF;secondary:#8AFF80;accent:#FFFF80;info_negative:#FF80BF;info_positive:#8AFF80;info_neutral_1:#FF9580;info_neutral_2:#FFFF80;info_special:#80FFEA"
@@ -63,9 +66,8 @@ setopt POSIX_BUILTINS
 setopt TRAPS_ASYNC
 setopt EMACS
 setopt AUTO_RESUME
-setopt SH_FILE_EXPANSION
+#setopt SH_FILE_EXPANSION
 #setopt NULL_GLOB
-setopt extendedglob
 #setopt shnullcmd
 setopt zle
 setopt complete_aliases
@@ -74,13 +76,26 @@ setopt MULTIOS
 setopt COMBINING_CHARS
 setopt SHORT_LOOPS
 setopt NOTIFY
+setopt ALIASES
+#setopt HASH_LIST_ALL
+setopt HASH_CMDS
+setopt HASH_DIRS
+setopt CHASE_LINKS
 
-alias compinit="compinit $1 $2 -d $XDG_CACHE_HOME/zsh/compdump && zcompile -UMz $XDG_CACHE_HOME/zsh/compdump"
-autoload -U -z -w /usr/local/Cellar/zsh/HEAD-b7f280a/share/zsh/functions/*~*.zwc~_*
-#compinit
+
+autoload -Uzw /usr/local/Cellar/zsh/HEAD-7a2e3b9/share/zsh/functions/(*~*.zwc~_*)
+
+#source ~/.zshautoload
+#autoload -U /usr/local/Cellar/zsh/HEAD-5b1c204/share/zsh/functions/*
+
+#alias -g compinit="fcz(){ compinit -d $XDG_CACHE_HOME/zsh/compdump $@ && zcompile -UMz $XDG_CACHE_HOME/zsh/compdump; unset -f fcz; }; fcz"
+
+alias compinit="compinit $@ -d $XDG_CACHE_HOME/zsh/compdump && zcompile -UMz $XDG_CACHE_HOME/zsh/compdump"
+
+#compinit -C
+#bashcompinit
 
 export MANPATH=/usr/local/share/man:/usr/share/man:$MANPATH
-#export TERM=xterm-256color
 #source ~/.zcompctl
 
 [[ -s "/usr/local/etc/grc.zsh" ]] && source /usr/local/etc/grc.zsh
@@ -92,9 +107,7 @@ export LC_CTYPE="en_US.UTF-8"
 export LESSOPEN="|/usr/local/bin/lesspipe.sh %s"
 export LESS=' -i -E -J -M -F -R -W -X -z-4'
 
-#autoload -U /usr/local/Cellar/zsh/HEAD-eb738c7/share/zsh/functions/*
-
-source ~/.config/lscolors
+#source ~/.config/lscolors
 source /Users/kieranmcgrath/.local/share/lscolors.sh
 
 #[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
@@ -121,9 +134,7 @@ autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
 add-zsh-hook chpwd chpwd_recent_dirs
 zstyle ':completion:*:*:cdr:*:*' menu selection
 
-source ~/.zpwrBindZstyle
-
-#zstyle ':autocomplete:' config true
+#zstyle ':autocomplete:' config
 zstyle ':autocomplete:*' default-context ''
 zstyle ':autocomplete:*' widget-style menu-select
 zstyle ':autocomplete:*' insert-unambiguous no
@@ -178,7 +189,12 @@ command exa --color=always -Gxa $@ | less
 export PATH="$HOME/.rbenv/bin:$PATH"
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
-eval "$(pyenv init -)"
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init - zsh)"
+#export PIP_CONFIG_FILE=~/.pip/pip.conf
+
 eval "$(pyenv virtualenv-init -)"
 eval "$(rbenv init -)"
 export PATH="$HOME/.plenv/bin:$PATH"
@@ -195,16 +211,15 @@ eval "$(plenv init -)"
 #zstyle ':completion:*:default' list-colors '${(s.:.)LS_COLORS}'
 setopt CDABLE_VARS
 #setopt GLOB_DOTS
-setopt CORRECT
+#setopt CORRECT
 #setopt CORRECT_ALL
 setopt HUP
-#setopt no_flowcontrol
+setopt no_flowcontrol
 setopt PROMPT_SUBST
-setopt ALIAS_FUNC_DEF
 setopt listpacked
 setopt longlistjobs
 #setopt rematchpcre
-setopt unset
+#setopt unset
 
 
 setopt auto_menu
@@ -212,7 +227,6 @@ builtin setopt menu_complete
 builtin setopt pathscript
 builtin setopt pathdirs
 builtin setopt list_packed
-setopt extended_glob
 setopt MAGIC_EQUAL_SUBST
 setopt MULTIBYTE
 
@@ -230,7 +244,7 @@ setopt share_history
 setopt GLOB_DOTS
 setopt TRANSIENT_RPROMPT
 
-set -o emacs
+bindkey -e
 unalias run-help
 autoload -U run-help
 export HELPDIR=/usr/local/share/zsh/5.9.0.1-dev/help:/usr/local/share/help
@@ -238,13 +252,14 @@ export PAGER='less'
 #eval "$(direnv hook zsh)"
 
 autoload -Uz tetriscurses
-bindkey -e
+#bindkey -v
 # End of lines added by compinstall
 # Lines configured by zsh-newuser-install
 #HISTFILE=~/.histfile
-HISTSIZE=100000
-SAVEHIST=100000
+HISTSIZE=500000
+SAVEHIST=500000
 # End of lines configured by zsh-newuser-install
+
 
 #export PATH="/usr/local/bin:$PATH"
 
@@ -267,7 +282,14 @@ function tat {
       /usr/local/bin/tmux
    fi
 }
-#export PATH="/usr/local/opt/ncurses/bin:$PATH"
+export PATH="/usr/local/opt/ncurses/bin:$PATH"
+
+#export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+#export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"
+#export PATH="/usr/local/opt/gnu-indent/libexec/gnubin:$PATH"
+#export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
+
+export TERM="xterm-256color"
 
 # disable sending of start (Ctrl-Q) and stop (Ctrl-S) characters
 #stty -ixoff
@@ -297,10 +319,11 @@ autoload -Uz promptinit
 
 export NVM_DIR="$HOME/.config/nvm"
 export NVM_COMPLETION=true
-#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 #[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-eval "`pip completion --zsh`"
+#eval "`pip completion --zsh`"
+
 
 if [[ ! -f $HOME/.zi/bin/zi.zsh ]]; then
   print -P "%F{33}▓▒░ %F{160}Installing (%F{33}z-shell/zi%F{160})…%f"
@@ -309,6 +332,7 @@ if [[ ! -f $HOME/.zi/bin/zi.zsh ]]; then
     print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
     print -P "%F{160}▓▒░ The clone has failed.%f%b"
 fi
+
 typeset -A ZI
 ZI[OPTIMIZE_OUT_DISK_ACCESSES]="1"
 ZI[BIN_DIR]="$HOME/.zi/bin"
@@ -326,8 +350,20 @@ zi light-mode for \
   z-shell/z-a-meta-plugins \
   @annexes+ @zunit @ext-git
 
-#zi ice wait'0d' compile'(async|async.plugin).zsh' pick'async.zsh' src'async.plugin.zsh' atload'!async_init'
+zi ice lucid
+zi light marlonrichert/zsh-autocomplete
+
+#wait '0d'
+#zi ice compile'(async|async.plugin).zsh' pick'async.zsh' src'async.plugin.zsh' atload'!async_init'
 #zi load mafredri/zsh-async
+
+#zi ice lucid
+#zi load marlonrichert/zsh-autocomplete
+
+#zi ice cloneonly atclone'source ls-colors.zsh my-lscolors fmt'
+#zi load xPMo/zsh-ls-colors
+
+zi load clarketm/zsh-completions
 
 #zi ice wait lucid nocompletions
 #zi load MenkeTechnologies/zsh-more-completions
@@ -337,12 +373,15 @@ zi load MenkeTechnologies/zsh-gem-completion
 zi load MenkeTechnologies/zsh-cargo-completion
 zi load MenkeTechnologies/zzcomplete
 zi load MenkeTechnologies/zsh-pip-completion
-zi load MenkeTechnologies/zsh-pip-description-completion
+zi ice lucid nocompile
+#zi load MenkeTechnologies/zsh-pip-description-completion
 zi ice lucid nocompile
 zi load MenkeTechnologies/zsh-cpan-completion
 
-zi ice lucid nocompile wait'0e' nocompletions
-zi load MenkeTechnologies/zsh-more-completions
+zi load wfxr/forgit
+
+zi ice as"completion"
+zi snippet OMZP::pod/_pod
 
 #zi wait pack atload=+"zicompinit; zicdreplay" for brew-completions
 
@@ -358,7 +397,7 @@ zi load lukechilds/zsh-better-npm-completion
 
 zi light joshskidmore/zsh-fzf-history-search
 zi ice
-zi light chitoku-k/fzf-zsh-completions
+zi load chitoku-k/fzf-zsh-completions
 
 #zi ice depth=1
 #zi light romkatv/powerlevel10k
@@ -368,20 +407,39 @@ zi light chitoku-k/fzf-zsh-completions
 #  pick"/dev/null" multisrc"{async,pure}.zsh" atload'!prompt_pure_precmd' nocd for \
 #    sindresorhus/pure
 
-#zi ice lucid compile'(typewritten|async).zsh' pick'async.zsh' src'typewritten.zsh' nocd
+#zi ice lucid compile'(typewritten|async).zsh' pick'async.zsh' src'typewritten.zsh'
 #zi load reobin/typewritten
 
-zi ice lucid compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh' nocd
+#zi ice lucid compile'(spaceship|async).zsh' pick'async.zsh' src'spaceship.zsh'
+#zi load spaceship-prompt/spaceship-prompt
+
+zi ice lucid compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
 zi load sindresorhus/pure
-fpath+=($HOME/.zi/plugins/sindresorhus---pure)
-promptinit
-prompt pure
+#zi load nguymin4/pure
+#fpath+=($HOME/.zi/plugins/nguymin4---pure)
+
+#fpath+=($HOME/.zi/plugins/sindresorhus---pure)
+#fpath+=($HOME/.zi/plugins/reobin/typewritten)
+#promptinit
+#prompt -s typewritten
+
+zi ice has'zoxide'
+zi light z-shell/zsh-zoxide
+
+##line below had wait'0e' nocompletion nocompile
+zi ice lucid
+zi load MenkeTechnologies/zsh-more-completions
+
+#zi pack for ls_colors
 
 #zi wait lucid pick'async.zsh' src'pure.zsh' atload'prompt_pure_precmd' nocd for \
 
-zi ice lucid
-zi load MenkeTechnologies/zsh-autocomplete
-#zi load marlonrichert/zsh-autocomplete
+zstyle -e '*' list-colors 'reply=(${(s[:])LS_COLORS})'
+
+#zi ice lucid
+#zi load MenkeTechnologies/zsh-autocomplete
+
+#source ~/.zpwrBindZstyle
 
 #zi ice lucid nocompile wait'0e' nocompletions
 #zi load MenkeTechnologies/zsh-more-completions
@@ -391,18 +449,25 @@ zi load MenkeTechnologies/zsh-autocomplete
 zi ice lucid
 zi light ThorpeJosh/mac-zsh-completions
 #zi load system-completions
-zi ice lucid
-zi light clarketm/zsh-completions
+
+
 #zi ice blockf
 #zi light zsh-users/zsh-completions
 #zi ice blockf
 #zi light zchee/zsh-completions
-zi wait pack for z-shell/system-completions
 
+##zi wait pack for z-shell/system-completions
+
+#zi load MenkeTechnologies/zsh-expand
+#zi load unixorn/fzf-zsh-plugin
 zi light z-shell/zui
 zi light z-shell/zsh-lint
+#export GENCOMP_DIR=~/.zi/plugins/Aloxaf---gencomp/completions
+#zi load Aloxaf/gencomp
+zi load anantkaul/zsh-completion-autogenerator
 
 #zi ice lucid src'zsh-autocomplete.plugin.zsh' atload'autoload +X -U -z module/.autocomplete.__init__'
+
 
 
 
@@ -434,28 +499,100 @@ zstyle ':completion:*' single-ignored 'show'
 
 #zi wait lucid light-mode for \
 #  atinit"zicompinit_fast; zicdreplay" \
-zi ice lucid wait'0f'
+#zi light zdharma-continuum/fast-syntax-highlighting
+#zi light  z-shell/F-Sy-H
 #zi light zdharma/fast-syntax-highlighting
-zi light xPMo/fast-syntax-highlighting
+#zi light zdharma/fast-syntax-highlighting
+#zi ice lucid wait'0f'
+zi load xPMo/fast-syntax-highlighting
 
-#zdharma/fast-syntax-highlighting
+#zi load softmoth/zsh-vim-mode
+
 export PATH="/usr/local/opt/m4/bin:$PATH"
 export PATH="/usr/local/opt/ncurses/bin:$PATH"
 export PATH="/usr/libexec:$PATH"
 
-export HOMEBREW_GITHUB_API_TOKEN=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
+export HOMEBREW_GITHUB_API_TOKEN=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
 #zicompinit
 #zicdreplay
 #typeset -gxU ZSH_AUTOSUGGEST_MANUAL_REBIND='1'
 typeset -gxU ZSH_AUTOSUGGEST_USE_ASYNC='1'
 
-export FPATH="/usr/local/share/zsh/site-functions:/usr/local/share/zsh/functions:$FPATH"
-typeset -U PATH FPATH
+export FPATH="$FPATH:/usr/local/share/zsh/functions:/usr/local/share/zsh/site-functions"
+
+#alias pip='function _pipsearch(){
+#    if [ $1 = "search" ]; then
+#        pypisearch "$2";
+#    else pip "$@";
+#    fi;
+#};_pipsearch'
 
 #zicompinit_fast
 #zicompinit_fast
-zicompinit_fast
+
+export                LISTMAX=0
+export              WORDCHARS='*?_.[]~&;!#$%^(){}<>'
+export             KEYTIMEOUT=100
+export          KEYBOARD_HACK=' '
+export          LISTROWSFIRST=1
+export ZSH_ACTIVE_COMPLETIONS="$( echo ${(kv)_comps[@]} )"
+
+# locale, timezone
+export            LC_ALL=""
+export              LANG=en_US.UTF-8
+export        LC_ADDRESS=en_US.UTF-8
+export        LC_COLLATE=en_US.UTF-8
+export          LC_CTYPE=en_US.UTF-8
+export LC_IDENTIFICATION=en_US.UTF-8
+export    LC_MEASUREMENT=en_US.UTF-8
+export       LC_MESSAGES=en_US.UTF-8
+export       LC_MONETARY=en_US.UTF-8
+export           LC_NAME=en_US.UTF-8
+export        LC_NUMERIC=en_US.UTF-8
+export          LC_PAPER=en_US.UTF-8
+export      LC_TELEPHONE=en_US.UTF-8
+export           LC_TIME=en_US.UTF-8
+export TZ="America/Los_Angeles"
+export TIMEZONE="America/Los_Angeles"
+
+# terminal options
+#stty eol     "undef"       2> /dev/null
+#stty eol2    "undef"       2> /dev/null
+#stty kill    "undef"       2> /dev/null
+#stty quit    "undef"       2> /dev/null
+#stty swtch   "undef"       2> /dev/null
+stty eof     "^D"          2> /dev/null
+stty erase   "^?"          2> /dev/null
+stty flush   "undef"       2> /dev/null
+stty intr    "^C"          2> /dev/null
+#stty line    6             2> /dev/null
+stty lnext   "^B"          2> /dev/null
+stty min     0             2> /dev/null
+stty rprnt   "^R"          2> /dev/null
+stty speed   115200         &> /dev/null
+stty start   "undef"       2> /dev/null
+stty stop    "undef"       2> /dev/null
+stty susp    "^Z"          2> /dev/null
+stty time    0             2> /dev/null
+stty werase  "^W"          2> /dev/null
+
+autoload edit-command-line
+zle -N edit-command-line
+
+#export PATH=/usr/local/opt/ccache/libexec:$PATH
+
+#activate_pyzshcomplete
+compinit
+bashcompinit
+#zicompinit
 zicdreplay
+compdef _pip pip
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-##[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+##[[ ! -f ~/.p10
+
+export GUILE_TLS_CERTIFICATE_DIRECTORY=/usr/local/etc/gnutls/
+
+typeset -U PATH FPATH
+
+#source ~/.zshunfunction

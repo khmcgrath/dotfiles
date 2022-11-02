@@ -1,0 +1,1 @@
+[[ -z ${commands[dircolors]} ]] && local P=g; ${P}sed -i '/DIR/c\\DIR 38;5;63;1' LS_COLORS; ${P}dircolors -b LS_COLORS >! clrs.zsh

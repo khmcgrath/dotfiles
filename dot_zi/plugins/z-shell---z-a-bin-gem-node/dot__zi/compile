@@ -1,1 +1,1 @@
-functions/.za-bgn-*
+functions/.*{handler,body,cygwin}

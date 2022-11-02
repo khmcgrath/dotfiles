@@ -1,494 +1,205 @@
-#compdef _golangci-lint golangci-lint
+#compdef golangci-lint
 
+# zsh completion for golangci-lint                        -*- shell-script -*-
 
-function _golangci-lint {
-  local -a commands
-
-  _arguments -C \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]' \
-    "1: :->cmnds" \
-    "*::arg:->args"
-
-  case $state in
-  cmnds)
-    commands=(
-      "cache:Cache control and information"
-      "completion:Output completion script"
-      "config:Config"
-      "help:Help"
-      "linters:List current linters configuration"
-      "run:Run this tool in cloud on every github pull request in https://golangci.com for free (public repos)"
-      "version:Version"
-    )
-    _describe "command" commands
-    ;;
-  esac
-
-  case "$words[1]" in
-  cache)
-    _golangci-lint_cache
-    ;;
-  completion)
-    _golangci-lint_completion
-    ;;
-  config)
-    _golangci-lint_config
-    ;;
-  help)
-    _golangci-lint_help
-    ;;
-  linters)
-    _golangci-lint_linters
-    ;;
-  run)
-    _golangci-lint_run
-    ;;
-  version)
-    _golangci-lint_version
-    ;;
-  esac
+__golangci-lint_debug()
+{
+    local file="$BASH_COMP_DEBUG_FILE"
+    if [[ -n ${file} ]]; then
+        echo "$*" >> "${file}"
+    fi
 }
 
+_golangci-lint()
+{
+    local shellCompDirectiveError=1
+    local shellCompDirectiveNoSpace=2
+    local shellCompDirectiveNoFileComp=4
+    local shellCompDirectiveFilterFileExt=8
+    local shellCompDirectiveFilterDirs=16
 
-function _golangci-lint_cache {
-  local -a commands
+    local lastParam lastChar flagPrefix requestComp out directive comp lastComp noSpace
+    local -a completions
 
-  _arguments -C \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]' \
-    "1: :->cmnds" \
-    "*::arg:->args"
+    __golangci-lint_debug "\n========= starting completion logic =========="
+    __golangci-lint_debug "CURRENT: ${CURRENT}, words[*]: ${words[*]}"
 
-  case $state in
-  cmnds)
-    commands=(
-      "clean:Clean cache"
-      "status:Show cache status"
-    )
-    _describe "command" commands
-    ;;
-  esac
+    # The user could have moved the cursor backwards on the command-line.
+    # We need to trigger completion from the $CURRENT location, so we need
+    # to truncate the command-line ($words) up to the $CURRENT location.
+    # (We cannot use $CURSOR as its value does not work when a command is an alias.)
+    words=("${=words[1,CURRENT]}")
+    __golangci-lint_debug "Truncated words[*]: ${words[*]},"
 
-  case "$words[1]" in
-  clean)
-    _golangci-lint_cache_clean
-    ;;
-  status)
-    _golangci-lint_cache_status
-    ;;
-  esac
+    lastParam=${words[-1]}
+    lastChar=${lastParam[-1]}
+    __golangci-lint_debug "lastParam: ${lastParam}, lastChar: ${lastChar}"
+
+    # For zsh, when completing a flag with an = (e.g., golangci-lint -n=<TAB>)
+    # completions must be prefixed with the flag
+    setopt local_options BASH_REMATCH
+    if [[ "${lastParam}" =~ '-.*=' ]]; then
+        # We are dealing with a flag with an =
+        flagPrefix="-P ${BASH_REMATCH}"
+    fi
+
+    # Prepare the command to obtain completions
+    requestComp="${words[1]} __complete ${words[2,-1]}"
+    if [ "${lastChar}" = "" ]; then
+        # If the last parameter is complete (there is a space following it)
+        # We add an extra empty parameter so we can indicate this to the go completion code.
+        __golangci-lint_debug "Adding extra empty parameter"
+        requestComp="${requestComp} \"\""
+    fi
+
+    __golangci-lint_debug "About to call: eval ${requestComp}"
+
+    # Use eval to handle any environment variables and such
+    out=$(eval ${requestComp} 2>/dev/null)
+    __golangci-lint_debug "completion output: ${out}"
+
+    # Extract the directive integer following a : from the last line
+    local lastLine
+    while IFS='\n' read -r line; do
+        lastLine=${line}
+    done < <(printf "%s\n" "${out[@]}")
+    __golangci-lint_debug "last line: ${lastLine}"
+
+    if [ "${lastLine[1]}" = : ]; then
+        directive=${lastLine[2,-1]}
+        # Remove the directive including the : and the newline
+        local suffix
+        (( suffix=${#lastLine}+2))
+        out=${out[1,-$suffix]}
+    else
+        # There is no directive specified.  Leave $out as is.
+        __golangci-lint_debug "No directive found.  Setting do default"
+        directive=0
+    fi
+
+    __golangci-lint_debug "directive: ${directive}"
+    __golangci-lint_debug "completions: ${out}"
+    __golangci-lint_debug "flagPrefix: ${flagPrefix}"
+
+    if [ $((directive & shellCompDirectiveError)) -ne 0 ]; then
+        __golangci-lint_debug "Completion received error. Ignoring completions."
+        return
+    fi
+
+    local activeHelpMarker="_activeHelp_ "
+    local endIndex=${#activeHelpMarker}
+    local startIndex=$((${#activeHelpMarker}+1))
+    local hasActiveHelp=0
+    while IFS='\n' read -r comp; do
+        # Check if this is an activeHelp statement (i.e., prefixed with $activeHelpMarker)
+        if [ "${comp[1,$endIndex]}" = "$activeHelpMarker" ];then
+            __golangci-lint_debug "ActiveHelp found: $comp"
+            comp="${comp[$startIndex,-1]}"
+            if [ -n "$comp" ]; then
+                compadd -x "${comp}"
+                __golangci-lint_debug "ActiveHelp will need delimiter"
+                hasActiveHelp=1
+            fi
+
+            continue
+        fi
+
+        if [ -n "$comp" ]; then
+            # If requested, completions are returned with a description.
+            # The description is preceded by a TAB character.
+            # For zsh's _describe, we need to use a : instead of a TAB.
+            # We first need to escape any : as part of the completion itself.
+            comp=${comp//:/\\:}
+
+            local tab="$(printf '\t')"
+            comp=${comp//$tab/:}
+
+            __golangci-lint_debug "Adding completion: ${comp}"
+            completions+=${comp}
+            lastComp=$comp
+        fi
+    done < <(printf "%s\n" "${out[@]}")
+
+    # Add a delimiter after the activeHelp statements, but only if:
+    # - there are completions following the activeHelp statements, or
+    # - file completion will be performed (so there will be choices after the activeHelp)
+    if [ $hasActiveHelp -eq 1 ]; then
+        if [ ${#completions} -ne 0 ] || [ $((directive & shellCompDirectiveNoFileComp)) -eq 0 ]; then
+            __golangci-lint_debug "Adding activeHelp delimiter"
+            compadd -x "--"
+            hasActiveHelp=0
+        fi
+    fi
+
+    if [ $((directive & shellCompDirectiveNoSpace)) -ne 0 ]; then
+        __golangci-lint_debug "Activating nospace."
+        noSpace="-S ''"
+    fi
+
+    if [ $((directive & shellCompDirectiveFilterFileExt)) -ne 0 ]; then
+        # File extension filtering
+        local filteringCmd
+        filteringCmd='_files'
+        for filter in ${completions[@]}; do
+            if [ ${filter[1]} != '*' ]; then
+                # zsh requires a glob pattern to do file filtering
+                filter="\*.$filter"
+            fi
+            filteringCmd+=" -g $filter"
+        done
+        filteringCmd+=" ${flagPrefix}"
+
+        __golangci-lint_debug "File filtering command: $filteringCmd"
+        _arguments '*:filename:'"$filteringCmd"
+    elif [ $((directive & shellCompDirectiveFilterDirs)) -ne 0 ]; then
+        # File completion for directories only
+        local subdir
+        subdir="${completions[1]}"
+        if [ -n "$subdir" ]; then
+            __golangci-lint_debug "Listing directories in $subdir"
+            pushd "${subdir}" >/dev/null 2>&1
+        else
+            __golangci-lint_debug "Listing directories in ."
+        fi
+
+        local result
+        _arguments '*:dirname:_files -/'" ${flagPrefix}"
+        result=$?
+        if [ -n "$subdir" ]; then
+            popd >/dev/null 2>&1
+        fi
+        return $result
+    else
+        __golangci-lint_debug "Calling _describe"
+        if eval _describe "completions" completions $flagPrefix $noSpace; then
+            __golangci-lint_debug "_describe found some completions"
+
+            # Return the success of having called _describe
+            return 0
+        else
+            __golangci-lint_debug "_describe did not find completions."
+            __golangci-lint_debug "Checking if we should do file completion."
+            if [ $((directive & shellCompDirectiveNoFileComp)) -ne 0 ]; then
+                __golangci-lint_debug "deactivating file completion"
+
+                # We must return an error code here to let zsh know that there were no
+                # completions found by _describe; this is what will trigger other
+                # matching algorithms to attempt to find completions.
+                # For example zsh can match letters in the middle of words.
+                return 1
+            else
+                # Perform file completion
+                __golangci-lint_debug "Activating file completion"
+
+                # We must return the result of this command, so it must be the
+                # last command, or else we must store its result to return it.
+                _arguments '*:filename:_files'" ${flagPrefix}"
+            fi
+        fi
+    fi
 }
 
-function _golangci-lint_cache_clean {
-  _arguments \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]'
-}
-
-function _golangci-lint_cache_status {
-  _arguments \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]'
-}
-
-
-function _golangci-lint_completion {
-  local -a commands
-
-  _arguments -C \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]' \
-    "1: :->cmnds" \
-    "*::arg:->args"
-
-  case $state in
-  cmnds)
-    commands=(
-      "bash:Output bash completion script"
-      "zsh:Output zsh completion script"
-    )
-    _describe "command" commands
-    ;;
-  esac
-
-  case "$words[1]" in
-  bash)
-    _golangci-lint_completion_bash
-    ;;
-  zsh)
-    _golangci-lint_completion_zsh
-    ;;
-  esac
-}
-
-function _golangci-lint_completion_bash {
-  _arguments \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]'
-}
-
-function _golangci-lint_completion_zsh {
-  _arguments \
-    '(-h --help)'{-h,--help}'[help for zsh]' \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]'
-}
-
-
-function _golangci-lint_config {
-  local -a commands
-
-  _arguments -C \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]' \
-    "1: :->cmnds" \
-    "*::arg:->args"
-
-  case $state in
-  cmnds)
-    commands=(
-      "path:Print used config path"
-    )
-    _describe "command" commands
-    ;;
-  esac
-
-  case "$words[1]" in
-  path)
-    _golangci-lint_config_path
-    ;;
-  esac
-}
-
-function _golangci-lint_config_path {
-  _arguments \
-    '--out-format[Format of output: colored-line-number|line-number|json|tab|checkstyle|code-climate|junit-xml]:' \
-    '--print-issued-lines[Print lines of code with issue]' \
-    '--print-linter-name[Print linter name in issue line]' \
-    '--uniq-by-line[Make issues output unique by line]' \
-    '--modules-download-mode[Modules download mode. If not empty, passed as -mod=<mode> to go tools]:' \
-    '--issues-exit-code[Exit code when issues were found]:' \
-    '*--build-tags[Build tags]:' \
-    '--timeout[Timeout for total work]:' \
-    '--tests[Analyze tests (*_test.go)]' \
-    '--print-resources-usage[Print avg and max memory usage of golangci-lint and total time]' \
-    '(-c --config)'{-c,--config}'[Read config from file path `PATH`]:' \
-    '--no-config[Don'\''t read config]' \
-    '*--skip-dirs[Regexps of directories to skip]:' \
-    '--skip-dirs-use-default[Use or not use default excluded directories:
-  - (^|/)vendor($|/)
-  - (^|/)third_party($|/)
-  - (^|/)testdata($|/)
-  - (^|/)examples($|/)
-  - (^|/)Godeps($|/)
-  - (^|/)builtin($|/)
-]' \
-    '*--skip-files[Regexps of files to skip]:' \
-    '(*-E *--enable)'{\*-E,\*--enable}'[Enable specific linter]:' \
-    '(*-D *--disable)'{\*-D,\*--disable}'[Disable specific linter]:' \
-    '--disable-all[Disable all linters]' \
-    '(*-p *--presets)'{\*-p,\*--presets}'[Enable presets (bugs|complexity|format|performance|style|unused) of linters. Run '\''golangci-lint linters'\'' to see them. This option implies option --disable-all]:' \
-    '--fast[Run only fast linters from enabled linters set (first run won'\''t be fast)]' \
-    '(*-e *--exclude)'{\*-e,\*--exclude}'[Exclude issue by regexp]:' \
-    '--exclude-use-default[Use or not use default excludes:
-  # errcheck: Almost all programs ignore errors on these functions and in most cases it'\''s ok
-  - Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*printf?|os\.(Un)?Setenv). is not checked
-
-  # golint: Annoying issue about not having a comment. The rare codebase has such comments
-  - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
-
-  # golint: False positive when tests are defined in package '\''test'\''
-  - func name will be used as test\.Test.* by other packages, and that stutters; consider calling this
-
-  # govet: Common false positives
-  - (possible misuse of unsafe.Pointer|should have signature)
-
-  # staticcheck: Developers tend to write in C-style with an explicit '\''break'\'' in a '\''switch'\'', so it'\''s ok to ignore
-  - ineffective break statement. Did you mean to break out of the outer loop
-
-  # gosec: Too many false-positives on '\''unsafe'\'' usage
-  - Use of unsafe calls should be audited
-
-  # gosec: Too many false-positives for parametrized shell calls
-  - Subprocess launch(ed with variable|ing should be audited)
-
-  # gosec: Duplicated errcheck checks
-  - G104
-
-  # gosec: Too many issues in popular repos
-  - (Expect directory permissions to be 0750 or less|Expect file permissions to be 0600 or less)
-
-  # gosec: False positive is triggered by '\''src, err := ioutil.ReadFile(filename)'\''
-  - Potential file inclusion via variable
-]' \
-    '--max-issues-per-linter[Maximum issues count per one linter. Set to 0 to disable]:' \
-    '--max-same-issues[Maximum count of issues with the same text. Set to 0 to disable]:' \
-    '(-n --new)'{-n,--new}'[Show only new issues: if there are unstaged changes or untracked files, only those changes are analyzed, else only changes in HEAD~ are analyzed.
-It'\''s a super-useful option for integration of golangci-lint into existing large codebase.
-It'\''s not practical to fix all existing issues at the moment of integration: much better to not allow issues in new code.
-For CI setups, prefer --new-from-rev=HEAD~, as --new can skip linting the current patch if any scripts generate unstaged files before golangci-lint runs.]' \
-    '--new-from-rev[Show only new issues created after git revision `REV`]:' \
-    '--new-from-patch[Show only new issues created in git patch with file path `PATH`]:' \
-    '--fix[Fix found issues (if it'\''s supported by the linter)]' \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]'
-}
-
-
-function _golangci-lint_help {
-  local -a commands
-
-  _arguments -C \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]' \
-    "1: :->cmnds" \
-    "*::arg:->args"
-
-  case $state in
-  cmnds)
-    commands=(
-      "linters:Help about linters"
-    )
-    _describe "command" commands
-    ;;
-  esac
-
-  case "$words[1]" in
-  linters)
-    _golangci-lint_help_linters
-    ;;
-  esac
-}
-
-function _golangci-lint_help_linters {
-  _arguments \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]'
-}
-
-function _golangci-lint_linters {
-  _arguments \
-    '--out-format[Format of output: colored-line-number|line-number|json|tab|checkstyle|code-climate|junit-xml]:' \
-    '--print-issued-lines[Print lines of code with issue]' \
-    '--print-linter-name[Print linter name in issue line]' \
-    '--uniq-by-line[Make issues output unique by line]' \
-    '--modules-download-mode[Modules download mode. If not empty, passed as -mod=<mode> to go tools]:' \
-    '--issues-exit-code[Exit code when issues were found]:' \
-    '*--build-tags[Build tags]:' \
-    '--timeout[Timeout for total work]:' \
-    '--tests[Analyze tests (*_test.go)]' \
-    '--print-resources-usage[Print avg and max memory usage of golangci-lint and total time]' \
-    '(-c --config)'{-c,--config}'[Read config from file path `PATH`]:' \
-    '--no-config[Don'\''t read config]' \
-    '*--skip-dirs[Regexps of directories to skip]:' \
-    '--skip-dirs-use-default[Use or not use default excluded directories:
-  - (^|/)vendor($|/)
-  - (^|/)third_party($|/)
-  - (^|/)testdata($|/)
-  - (^|/)examples($|/)
-  - (^|/)Godeps($|/)
-  - (^|/)builtin($|/)
-]' \
-    '*--skip-files[Regexps of files to skip]:' \
-    '(*-E *--enable)'{\*-E,\*--enable}'[Enable specific linter]:' \
-    '(*-D *--disable)'{\*-D,\*--disable}'[Disable specific linter]:' \
-    '--disable-all[Disable all linters]' \
-    '(*-p *--presets)'{\*-p,\*--presets}'[Enable presets (bugs|complexity|format|performance|style|unused) of linters. Run '\''golangci-lint linters'\'' to see them. This option implies option --disable-all]:' \
-    '--fast[Run only fast linters from enabled linters set (first run won'\''t be fast)]' \
-    '(*-e *--exclude)'{\*-e,\*--exclude}'[Exclude issue by regexp]:' \
-    '--exclude-use-default[Use or not use default excludes:
-  # errcheck: Almost all programs ignore errors on these functions and in most cases it'\''s ok
-  - Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*printf?|os\.(Un)?Setenv). is not checked
-
-  # golint: Annoying issue about not having a comment. The rare codebase has such comments
-  - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
-
-  # golint: False positive when tests are defined in package '\''test'\''
-  - func name will be used as test\.Test.* by other packages, and that stutters; consider calling this
-
-  # govet: Common false positives
-  - (possible misuse of unsafe.Pointer|should have signature)
-
-  # staticcheck: Developers tend to write in C-style with an explicit '\''break'\'' in a '\''switch'\'', so it'\''s ok to ignore
-  - ineffective break statement. Did you mean to break out of the outer loop
-
-  # gosec: Too many false-positives on '\''unsafe'\'' usage
-  - Use of unsafe calls should be audited
-
-  # gosec: Too many false-positives for parametrized shell calls
-  - Subprocess launch(ed with variable|ing should be audited)
-
-  # gosec: Duplicated errcheck checks
-  - G104
-
-  # gosec: Too many issues in popular repos
-  - (Expect directory permissions to be 0750 or less|Expect file permissions to be 0600 or less)
-
-  # gosec: False positive is triggered by '\''src, err := ioutil.ReadFile(filename)'\''
-  - Potential file inclusion via variable
-]' \
-    '--max-issues-per-linter[Maximum issues count per one linter. Set to 0 to disable]:' \
-    '--max-same-issues[Maximum count of issues with the same text. Set to 0 to disable]:' \
-    '(-n --new)'{-n,--new}'[Show only new issues: if there are unstaged changes or untracked files, only those changes are analyzed, else only changes in HEAD~ are analyzed.
-It'\''s a super-useful option for integration of golangci-lint into existing large codebase.
-It'\''s not practical to fix all existing issues at the moment of integration: much better to not allow issues in new code.
-For CI setups, prefer --new-from-rev=HEAD~, as --new can skip linting the current patch if any scripts generate unstaged files before golangci-lint runs.]' \
-    '--new-from-rev[Show only new issues created after git revision `REV`]:' \
-    '--new-from-patch[Show only new issues created in git patch with file path `PATH`]:' \
-    '--fix[Fix found issues (if it'\''s supported by the linter)]' \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]'
-}
-
-function _golangci-lint_run {
-  _arguments \
-    '--out-format[Format of output: colored-line-number|line-number|json|tab|checkstyle|code-climate|junit-xml]:' \
-    '--print-issued-lines[Print lines of code with issue]' \
-    '--print-linter-name[Print linter name in issue line]' \
-    '--uniq-by-line[Make issues output unique by line]' \
-    '--modules-download-mode[Modules download mode. If not empty, passed as -mod=<mode> to go tools]:' \
-    '--issues-exit-code[Exit code when issues were found]:' \
-    '*--build-tags[Build tags]:' \
-    '--timeout[Timeout for total work]:' \
-    '--tests[Analyze tests (*_test.go)]' \
-    '--print-resources-usage[Print avg and max memory usage of golangci-lint and total time]' \
-    '(-c --config)'{-c,--config}'[Read config from file path `PATH`]:' \
-    '--no-config[Don'\''t read config]' \
-    '*--skip-dirs[Regexps of directories to skip]:' \
-    '--skip-dirs-use-default[Use or not use default excluded directories:
-  - (^|/)vendor($|/)
-  - (^|/)third_party($|/)
-  - (^|/)testdata($|/)
-  - (^|/)examples($|/)
-  - (^|/)Godeps($|/)
-  - (^|/)builtin($|/)
-]' \
-    '*--skip-files[Regexps of files to skip]:' \
-    '(*-E *--enable)'{\*-E,\*--enable}'[Enable specific linter]:' \
-    '(*-D *--disable)'{\*-D,\*--disable}'[Disable specific linter]:' \
-    '--disable-all[Disable all linters]' \
-    '(*-p *--presets)'{\*-p,\*--presets}'[Enable presets (bugs|complexity|format|performance|style|unused) of linters. Run '\''golangci-lint linters'\'' to see them. This option implies option --disable-all]:' \
-    '--fast[Run only fast linters from enabled linters set (first run won'\''t be fast)]' \
-    '(*-e *--exclude)'{\*-e,\*--exclude}'[Exclude issue by regexp]:' \
-    '--exclude-use-default[Use or not use default excludes:
-  # errcheck: Almost all programs ignore errors on these functions and in most cases it'\''s ok
-  - Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*printf?|os\.(Un)?Setenv). is not checked
-
-  # golint: Annoying issue about not having a comment. The rare codebase has such comments
-  - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
-
-  # golint: False positive when tests are defined in package '\''test'\''
-  - func name will be used as test\.Test.* by other packages, and that stutters; consider calling this
-
-  # govet: Common false positives
-  - (possible misuse of unsafe.Pointer|should have signature)
-
-  # staticcheck: Developers tend to write in C-style with an explicit '\''break'\'' in a '\''switch'\'', so it'\''s ok to ignore
-  - ineffective break statement. Did you mean to break out of the outer loop
-
-  # gosec: Too many false-positives on '\''unsafe'\'' usage
-  - Use of unsafe calls should be audited
-
-  # gosec: Too many false-positives for parametrized shell calls
-  - Subprocess launch(ed with variable|ing should be audited)
-
-  # gosec: Duplicated errcheck checks
-  - G104
-
-  # gosec: Too many issues in popular repos
-  - (Expect directory permissions to be 0750 or less|Expect file permissions to be 0600 or less)
-
-  # gosec: False positive is triggered by '\''src, err := ioutil.ReadFile(filename)'\''
-  - Potential file inclusion via variable
-]' \
-    '--max-issues-per-linter[Maximum issues count per one linter. Set to 0 to disable]:' \
-    '--max-same-issues[Maximum count of issues with the same text. Set to 0 to disable]:' \
-    '(-n --new)'{-n,--new}'[Show only new issues: if there are unstaged changes or untracked files, only those changes are analyzed, else only changes in HEAD~ are analyzed.
-It'\''s a super-useful option for integration of golangci-lint into existing large codebase.
-It'\''s not practical to fix all existing issues at the moment of integration: much better to not allow issues in new code.
-For CI setups, prefer --new-from-rev=HEAD~, as --new can skip linting the current patch if any scripts generate unstaged files before golangci-lint runs.]' \
-    '--new-from-rev[Show only new issues created after git revision `REV`]:' \
-    '--new-from-patch[Show only new issues created in git patch with file path `PATH`]:' \
-    '--fix[Fix found issues (if it'\''s supported by the linter)]' \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]'
-}
-
-function _golangci-lint_version {
-  _arguments \
-    '--color[Use color when printing; can be '\''always'\'', '\''auto'\'', or '\''never'\'']:' \
-    '(-j --concurrency)'{-j,--concurrency}'[Concurrency (default NumCPU)]:' \
-    '--cpu-profile-path[Path to CPU profile output file]:' \
-    '--mem-profile-path[Path to memory profile output file]:' \
-    '--trace-path[Path to trace output file]:' \
-    '(-v --verbose)'{-v,--verbose}'[verbose output]' \
-    '--version[Print version]'
-}
-
-compdef _golangci-lint golangci-lint
+# don't run the completion function when being source-ed or eval-ed
+if [ "$funcstack[1]" = "_golangci-lint" ]; then
+    _golangci-lint
+fi

@@ -1,0 +1,17 @@
+#compdef pod
+
+# zsh completions for 'pod'
+# automatically generated with http://github.com/RobSis/zsh-completion-generator
+local arguments
+
+arguments=(
+  '--allow-root[allows CocoaPods to run as root]'
+  '--silent[show nothing]'
+  '--version[show the version of the tool]'
+  '--verbose[show more debugging information]'
+  '--no-ansi[show output without ANSI codes]'
+  '--help[show help banner of specified command]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

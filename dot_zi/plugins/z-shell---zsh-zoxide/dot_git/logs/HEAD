@@ -1,0 +1,4 @@
+0000000000000000000000000000000000000000 aa19b0084e6e87ec389fc1743e6894816341ea67 Kieran McGrath <khmcgrath@gmail.com> 1664555185 -0700	clone: from https://github.com/z-shell/zsh-zoxide
+aa19b0084e6e87ec389fc1743e6894816341ea67 1b0d94c077b7f8a24f274f0e7b57e8e1226a33d6 Kieran McGrath <khmcgrath@gmail.com> 1666973330 -0700	pull --no-stat --ff-only origin main: Fast-forward
+1b0d94c077b7f8a24f274f0e7b57e8e1226a33d6 abaf053cf020a3d10d60f77b52a02180c19d91e0 Kieran McGrath <khmcgrath@gmail.com> 1667182454 -0700	pull --no-stat --ff-only origin main: Fast-forward
+abaf053cf020a3d10d60f77b52a02180c19d91e0 23f82de70d8a2cc8601810fd9205f1a72cf63f90 Kieran McGrath <khmcgrath@gmail.com> 1667239947 -0700	pull --no-stat --ff-only origin main: Fast-forward

@@ -10,7 +10,7 @@
 # "zsh-pip-clear-cache".
 
 ZSH_PIP_CACHE_FILE=~/.pip/zsh-cache
-ZSH_PIP_INDEXES=(https://pypi.org/simple/)
+ZSH_PIP_INDEXES=(https://pypi.org/simple)
 
 alias pip="'builtin' 'noglob' 'command' 'pip'" # allows square brackets for pip command invocation
 

@@ -1,22 +1,22 @@
 <h1></h1><div align="center"><table width="100%" height="auto">
  <tr align="center" margin-left="auto" margin-right="auto"><td align="center">
   <h1>
-   <a title="❮ ZI ❯" target="_self" href="https://github.com/z-shell/zi">
+   <a title="❮ Zi ❯" target="_self" href="https://github.com/z-shell/zi">
   <img style="width:60;height:60px"
-    src="https://raw.githubusercontent.com/z-shell/zi/main/docs/images/favicon.svg"
-    alt="Logo" /></a>❮ ZI ❯
+    src="https://raw.githubusercontent.com/z-shell/zi/main/docs/images/logo.png"
+    alt="Logo" /></a>❮ Zi ❯
   </h1>
   <h2>A linter for Zsh scripting language.</h2>
 <h3>
   <a href="https://github.com/orgs/z-shell/discussions/">《❔》Ask a Question </a>
-  <a href="https://z.digitalclouds.dev/search/">《💡》Search Wiki </a>
+  <a href="https://wiki.zshell.dev/search/">《💡》Search Wiki </a>
   <a href="https://github.com/z-shell/community/issues/new?assignees=&labels=%F0%9F%91%A5+member&template=membership.yml&title=team%3A+">《💜》Join </a>
-  <a href="https://digitalclouds.crowdin.com/z-shell/">《🌐》Localize </a>
+  <a href="https://translate.zshell.dev">《🌐》Localize </a>
 </h3>
   </td></tr>
 <tr>
 <td align="center">
-  <a title="Crowdin" target="_self" href="https://crowdin.digitalclouds.dev/z-shell">
+  <a title="Crowdin" target="_self" href="https://translate.zshell.dev">
     <img align="center" src="https://badges.crowdin.net/e/f108c12713ee8526ac878d5671ad6e29/localized.svg" />
   </a>
   <!--
@@ -39,9 +39,9 @@
 
 ## Install
 
-Prerequisites: [ZI](https://github.com/z-shell/zi).
+Prerequisites: [Zi](https://github.com/z-shell/zi).
 
-Then add to your .zshrc following:
+Then add the following to your `.zshrc` file:
 
 ```zsh
 zi light z-shell/zui

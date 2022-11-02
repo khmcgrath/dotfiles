@@ -46,17 +46,11 @@
 *.eps      binary
 
 # Scripts
-*.bash          text eol=lf
-*.fish          text eol=lf
-*.sh            text eol=lf
-_zi             text eol=lf
-example-script  text eol=lf
-*z-a-*          text eol=lf
-*za-*           text eol=lf
-*.zi            text eol=lf
-*.zsh           text eol=lf
-*.zunit         text eol=lf
-
+*.bash     text eol=lf
+*.fish     text eol=lf
+*.sh       text eol=lf
+*.zsh      text eol=lf
+*.zunit    text eol=lf
 # These are explicitly windows files and should use crlf
 *.bat      text eol=crlf
 *.cmd      text eol=crlf

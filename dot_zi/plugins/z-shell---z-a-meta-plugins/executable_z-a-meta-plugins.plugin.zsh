@@ -4,17 +4,17 @@
 # Copyright (c) 2021 Z-Shell Community
 #
 # Zsh Plugin Standard
-# https://z.digitalclouds.dev/community/zsh_plugin_standard#zero-handling
+# https://wiki.zshell.dev/community/zsh_plugin_standard#zero-handling
 0="${ZERO:-${${0:#$ZSH_ARGZERO}:-${(%):-%N}}}"
 0="${${(M)0:#/*}:-$PWD/$0}"
 
-# https://z.digitalclouds.dev/community/zsh_plugin_standard/#funtions-directory
+# https://wiki.zshell.dev/community/zsh_plugin_standard/#funtions-directory
 if [[ $PMSPEC != *f* ]] {
   fpath+=( "${0:h}/functions" )
 }
 
 # Standard hash for plugins:
-# https://z.digitalclouds.dev/community/zsh_plugin_standard#standard-plugins-hash
+# https://wiki.zshell.dev/community/zsh_plugin_standard#standard-plugins-hash
 typeset -gA zi_annex_meta_plugins
 zi_annex_meta_plugins[0]="$0" 
 zi_annex_meta_plugins[repo-dir]="${0:h}"
@@ -50,12 +50,12 @@ zi_annex_meta_plugins_map=(
   annexes+ "annexes z-shell/z-a-submods z-shell/z-a-test"
   
   # @z-shell
-  z-shell     "z-shell/F-Sy-H z-shell/H-S-MW z-shell/zsh-diff-so-fancy z-shell/zsh-select"
-  z-shell+    "z-shell/zconvey z-shell/zui z-shell/zflai"
+  z-shell     "z-shell/F-Sy-H z-shell/H-S-MW z-shell/zsh-diff-so-fancy"
+  z-shell+    "z-shell/zsh-select z-shell/zconvey z-shell/zui z-shell/zflai"
 
   # @zsh-users
   zsh-users       "zsh-users/zsh-syntax-highlighting zsh-users/zsh-autosuggestions zsh-users/zsh-completions"
-  zsh-users+fast  "z-shell/F-Sy-H zsh-users/zsh-autosuggestions zsh-users/zsh-completions"
+  zsh-users+fast  "z-shell/F-Sy-H zsh-users/zsh-autosuggestions zsh-users/zsh-completions z-shell/zsh-fancy-completions"
 
   # @romkatv
   romkatv    "romkatv/powerlevel10k"
@@ -101,7 +101,7 @@ typeset -g _std="lucid"
 
 zi_annex_meta_plugins_config_map=(
   # @z-shell (all annexes + extensions, without Meta-Plugins, obviously)
-  z-shell/z-a-bin-gem-node  "$_std compile'functions/.za-bgn-*'"
+  z-shell/z-a-bin-gem-node  "$_std compile'functions/.*{handler,body,cygwin}'"
   z-shell/z-a-default-ice   "$_std"
   z-shell/z-a-readurl       "$_std"
   z-shell/z-a-patch-dl      "$_std"
@@ -116,12 +116,13 @@ zi_annex_meta_plugins_config_map=(
   # @zsh-users
   zsh-users/zsh-syntax-highlighting   "$_std atinit'ZI[COMPINIT_OPTS]=-C; zicompinit; zicdreplay;'"
   zsh-users/zsh-autosuggestions       "$_std atload'_zsh_autosuggest_start;'"
-  zsh-users/zsh-completions           "$_std pick'/dev/null'"
+  zsh-users/zsh-completions           "$_std atpull'zi creinstall -q .' pick'/dev/null'"
 
   # @z-shell
   z-shell/F-Sy-H                      "$_std atinit'ZI[COMPINIT_OPTS]=-C; zicompinit; zicdreplay;' atload'fast-theme z-shell &>/dev/null;'"
   z-shell/H-S-MW                      "$_std atinit'zstyle :history-search-multi-word page-size 7;'"
   z-shell/zsh-diff-so-fancy           "$_std null sbin'bin/git-dsf;bin/diff-so-fancy'"
+  z-shell/zsh-fancy-completions       "$_std"
 
   # @z-shell, less popular
   z-shell/zui             "$_std blockf"

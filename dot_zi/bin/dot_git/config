@@ -8,8 +8,8 @@
 [submodule]
 	active = .
 [remote "origin"]
-	url = https://github.com/z-shell/zi
+	url = https://github.com/ss-o/zi.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
-[branch "next"]
+[branch "refactor-mods"]
 	remote = origin
-	merge = refs/heads/next
+	merge = refs/heads/refactor-mods

@@ -1,15 +1,7 @@
 #export BYOBU_PREFIX=/usr/local
 
 # Created by `pipx` on 2021-05-04 03:15:30
-export PATH="$PATH:/Users/kieranmcgrath/.local/bin"
-
-export PATH="$PATH:/Users/kieranmcgrath/bin"
-
-# Setting PATH for Python 3.9
-# The original version is saved in .zprofile.pysave
-#PATH="/Library/Frameworks/Python.framework/Versions/3.9/bin:${PATH}"
-export PATH
-
+export PATH="/Users/kieranmcgrath/.local/bin:$PATH"
 
 if [ -d /etc/profile.d ]; then
   for i in /etc/profile.d/*.sh; do
@@ -20,6 +12,50 @@ if [ -d /etc/profile.d ]; then
   unset i
 fi
 
+export XDG_CACHE_HOME="$HOME"/.cache
+export XDG_CONFIG_HOME="$HOME"/.config
+export XDG_DATA_HOME="$HOME"/.local/share
+export ZDOTDIR="$HOME"
+
+#export PYENV_ROOT="$HOME/.pyenv"
+#command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+#eval "$(pyenv init - zsh)"
+
+export PATH="$PATH:/usr/local/opt/lib"
+export PATH="$PATH:/usr/local/opt/include"
+
 #source ~/.local/share/lscolors.sh
 #eval /usr/local/bin/gdircolors
 #_byobu_sourced=1 . /usr/local/Cellar/byobu/HEAD-bfb7a76/bin/byobu-launch 2>/dev/null || true
+
+# Setting PATH for Python 3.9
+# The original version is saved in .zprofile.pysave
+#PATH="/Library/Frameworks/Python.framework/Versions/3.9/bin:${PATH}"
+export PATH="$PATH:/Users/kieranmcgrath/.cargo/bin"
+export PATH="$PATH:/Users/kieranmcgrath/bin"
+#export PATH="$PATH:/usr/local/opt/coreutils/libexec/gnubin"
+
+export CPATH="/usr/local/include:/opt/local/include"
+export C_INCLUDE_PATH="/usr/local/include:/opt/local/include"
+export CPLUS_INCLUDE_PATH="/usr/local/include:/opt/local/include"
+export OBJC_INCLUDE_PATH="/usr/local/include:/opt/local/include"
+
+export LIBRARY_PATH="/usr/local/lib:/usr/lib:/opt/local/lib:$LIBRARY_PATH"
+export DYLD_FALLBACK_LIBRARY_PATH="/usr/local/lib:/usr/lib:/opt/local/lib:/usr/local/opt/dyld-headers/include:$DYLD_FALLBACK_LIBRARY_PATH"
+export CPPFLAGS="-I/usr/local/opt/dyld-headers/include:$CPPFLAGS"
+#export PYTHONHOME="~/.pyenv/versions/3.9.5/lib/python3.9"
+#export PYTHONPATH="$PYTHONHOME/site-packages"
+
+##
+# Your previous /Users/kieranmcgrath/.zprofile file was backed up as /Users/kieranmcgrath/.zprofile.macports-saved_2022-08-21_at_13:50:24
+##
+
+# MacPorts Installer addition on 2022-08-21_at_13:50:24: adding an appropriate PATH variable for use with MacPorts.
+export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
+# Finished adapting your PATH environment variable for use with MacPorts.
+export THEOS=~/theos
+
+HB_CNF_HANDLER="$(brew --repository)/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
+if [ -f "$HB_CNF_HANDLER" ]; then
+source "$HB_CNF_HANDLER";
+fi
